@@ -64,7 +64,7 @@ void UDPServer::threadedFunction(){
         if(connected) {
             
             // currently only setup for receiving
-            // receive message - blocks thread until message
+            // receive message - blocks thread until full message
             try {
                 
                 // receive

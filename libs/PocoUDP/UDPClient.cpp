@@ -25,6 +25,7 @@ void UDPClient::connect(string ipAddr, int port) {
     socketAddress = new Poco::Net::SocketAddress(ipAddr, port);
     socket = new Poco::Net::DatagramSocket(Poco::Net::IPAddress::IPv4);
     
+    
     try {
         
         // client must connect to server
@@ -39,6 +40,31 @@ void UDPClient::connect(string ipAddr, int port) {
     } catch (Poco::Exception& exc) {
         
         disconnect();        
+        ofLog() << "UDPClient Error: could not create socket- " << exc.displayText();
+    }
+}
+
+void UDPClient::connect(string ipAddr, int port, string sourceIpAddr, int sourcePort, bool reuseAddress) {
+    
+    // setup tcp poco client
+    socketAddressSource = new Poco::Net::SocketAddress(sourceIpAddr, sourcePort);
+    socketAddress = new Poco::Net::SocketAddress(ipAddr, port);
+    socket = new Poco::Net::DatagramSocket(*socketAddressSource, reuseAddress);
+    
+    try {
+        
+        // client must connect to server
+        socket->connect(*socketAddress);
+        connected = true;
+        ofLog() << "UDPClient connected";
+        ofLog() << "Max receive size: " << socket->getReceiveBufferSize();
+        ofLog() << "Max send size: " << socket->getSendBufferSize(); // 9216
+        ofLog() << "Connect: " << socketAddress->toString();
+        ofLog() << "Socket: " << socket->address().toString();
+        
+    } catch (Poco::Exception& exc) {
+        
+        disconnect();
         ofLog() << "UDPClient Error: could not create socket- " << exc.displayText();
     }
 }

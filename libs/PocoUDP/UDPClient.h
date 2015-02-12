@@ -25,7 +25,7 @@ public:
     
     // client only connects (no binding)
     void connect(string ipAddr, int port);
-    void connect(string ipAddr, int destinationPort, int sourcePort, bool reuseAddress=false);
+    void connect(string ipAddr, int port, string sourceIpAddr, int sourcePort, bool reuseAddress=false);
     bool connected;
     
     // send (blocking)

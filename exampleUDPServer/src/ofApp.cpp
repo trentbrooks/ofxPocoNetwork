@@ -5,7 +5,8 @@ void ofApp::setup(){
     
     ofSetFrameRate(60);
     
-    server.bind(5004);
+    server.bind(5002);
+    //server.setBroadcast(true);
 }
 
 //--------------------------------------------------------------
@@ -16,6 +17,7 @@ void ofApp::update(){
         string message;
         server.getNextMessage(message);
         receivedMessages.push_back(message);
+        
     }
 
 }
@@ -44,6 +46,9 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
+    // not really working- only sends after a receive
+    //string message = "Hello from server pressed:" + ofToString(key);
+    //server.sendMessage(message);
 }
 
 //--------------------------------------------------------------

@@ -5,7 +5,10 @@
 void ofApp::setup(){
     
     ofSetFrameRate(60);
-    client.connect("localhost",5004);
+    
+    client.connect("localhost",5002);
+    //client.connect("localhost", 5002, "localhost", 5002, true);
+    //client.setBroadcast(true);
 }
 
 //--------------------------------------------------------------
@@ -27,13 +30,13 @@ void ofApp::draw(){
     ofSetColor(0);
     ofDrawBitmapString(sendOutput.str(), 20, 80);
     
-    /*stringstream receiveOutput;
+    stringstream receiveOutput;
     receiveOutput << "RECEIVED MESSAGES..." << endl;
     for(int i = receivedMessages.size()-1; i >= 0; i--) {
         receiveOutput << receivedMessages[i] << endl;
     }
     ofSetColor(0);
-    ofDrawBitmapString(receiveOutput.str(), ofGetWidth()*.5, 80);*/
+    ofDrawBitmapString(receiveOutput.str(), ofGetWidth()*.5, 80);
     
     // info
     stringstream output;
@@ -59,7 +62,7 @@ void ofApp::keyPressed(int key){
     if(recvBytes) {
         //ofLog() << "Recv bytes: " << recvBytes << " : " << messageR;
         receivedMessages.push_back(messageR);
-    } */
+    }*/
 
 }
 
