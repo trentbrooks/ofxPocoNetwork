@@ -22,16 +22,18 @@ void UDPServer::disconnect() {
     if(socket) delete socket;
 }
 
-void UDPServer::bind(int port){
+void UDPServer::bind(int port, bool reuseAddress){
     
     if(connected) disconnect();
     
-    // setup udp poco server
+    // setup udp poco server (localhost)
     socketAddress = new Poco::Net::SocketAddress(Poco::Net::IPAddress(), port);
     //socket = new Poco::Net::DatagramSocket(Poco::Net::IPAddress::IPv4); // not binded
-    socket = new Poco::Net::DatagramSocket(*socketAddress); // automatically binds to socket
+    socket = new Poco::Net::DatagramSocket(*socketAddress, reuseAddress); // automatically binds to socket
     
     connected = true;
+    ofLog() << "Bind to: " << socketAddress->toString();
+    ofLog() << "Socket: " << socket->address().toString();
     ofLog() << "Max receive size: " << socket->getReceiveBufferSize();
     ofLog() << "Max send size: " << socket->getSendBufferSize();
     
@@ -46,6 +48,11 @@ void UDPServer::bind(int port){
     if(!isThreadRunning()) startThread();
 }
 
+void UDPServer::setBroadcast(bool broadcast) {
+    if(connected) {
+        socket->setBroadcast(broadcast);
+    }
+}
 
 
 // thread
@@ -63,22 +70,37 @@ void UDPServer::threadedFunction(){
                 // receive
                 ofBuffer buffer;
                 buffer.allocate(receiveSize);
-                Poco::Net::SocketAddress sender; // use this to identify the client
+                Poco::Net::SocketAddress sender; // use this to identify the client/sender
                 int n = socket->receiveFrom(buffer.getData(), buffer.size(), sender);
                 
                 // who sent message (sender)
                 //ofLog() << "Received message from: " << sender.toString() << ", size: " << n;
                 //ofLog() << "Message: " << buffer.getData();
-                
+
                 
                 // copy/replace buffer / or push into queue
                 mutex.lock();
                 receiveBuffers.push(buffer);
                 mutex.unlock();
                 
-                // test: send a message back to sender- works
+                // test: send a message back to client/sender- works
+                // note - the send port is different?
                 //int sent = socket->sendTo("hello", 5, sender);
+                //int n2 = socket->sendTo(buffer.getData(), buffer.size(), sender);
+                //int sent = socket->sendBytes("hello", 5);
                 //ofLog() << "Sent back: " << sent;
+                
+                // send a single message from the queue if exists
+                // FIXME: this needs work...
+                mutex.lock();
+                if(sendBuffers.size()) {
+                    ofBuffer sendBuffer = sendBuffers.front();
+                    sendBuffers.pop();
+                    mutex.unlock();
+                    int nSent = socket->sendTo(sendBuffer.getData(), sendBuffer.size(), sender);
+                } else {
+                    mutex.unlock();
+                }
 
             } catch (Poco::Exception &e) {
                 ofLogError() << "* UDPServer read fail 1";
@@ -128,6 +150,25 @@ bool UDPServer::getNextMessage(string& msg) {
         return true;
     }
     return false;
+}
+    
+
+// sending - adds messages to client queue (non blocking)
+//--------------------------------------------------------------
+void UDPServer::sendMessage(string msg) {
+    
+    Poco::ScopedLock<ofMutex> lock(mutex);
+    if(!connected) return;
+    ofBuffer buffer(msg);
+    sendBuffers.push(buffer);
+    ofLog() << "added message";
+}
+
+
+void UDPServer::sendMessage(ofBuffer& buffer) {
+    Poco::ScopedLock<ofMutex> lock(mutex);
+    if(!connected) return;
+    sendBuffers.push(buffer);
 }
 
 

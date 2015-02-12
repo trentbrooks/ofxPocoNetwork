@@ -5,6 +5,7 @@ namespace ofxPocoNetwork {
     
 UDPClient::UDPClient() {    
     connected = false;
+    receiveSize = 256;
 }
 
 UDPClient::~UDPClient() {
@@ -32,7 +33,8 @@ void UDPClient::connect(string ipAddr, int port) {
         ofLog() << "UDPClient connected";
         ofLog() << "Max receive size: " << socket->getReceiveBufferSize();
         ofLog() << "Max send size: " << socket->getSendBufferSize(); // 9216
-        
+        ofLog() << "Connect: " << socketAddress->toString();
+        ofLog() << "Socket: " << socket->address().toString();
         
     } catch (Poco::Exception& exc) {
         
@@ -41,8 +43,20 @@ void UDPClient::connect(string ipAddr, int port) {
     }
 }
 
-
-
+    
+void UDPClient::setBroadcast(bool broadcast) {
+    if(connected) {
+        socket->setBroadcast(broadcast);
+    }
+}
+    
+//--------------------------------------------------------------
+void UDPClient::printInfo() {
+    
+    ofLog() << "Connect: " << socketAddress->toString();
+    ofLog() << "Socket: " << socket->address().toString();
+}
+    
 // send
 //--------------------------------------------------------------
 int UDPClient::sendMessage(string msg) {
@@ -58,16 +72,56 @@ int UDPClient::sendMessage(ofBuffer& buffer) {
     if(connected) {
         try {
             int sent = socket->sendBytes(buffer.getData(), buffer.size());
-            //int sent = socket->sendTo(buffer, sendSize, *socketAddress);
+            //int sent = socket->sendTo(buffer.getData(), buffer.size(), *socketAddress);
             return sent;
         } catch (Poco::Exception &e) {
-            ofLogError() << "* UDPClient send fail 1";
+            ofLogError() << "* UDPClient send fail 1: " << e.message();
             return 0;
         } catch(std::exception& exc) {
             ofLogError() << "* UDPClient send fail 2";
             return 0;;
         } catch (...) {
             ofLogError() << "* UDPClient send fail 3";
+            return 0;
+        }
+    }
+    return 0;
+}
+    
+    
+// receive
+//--------------------------------------------------------------
+void UDPClient::setReceiveSize(int size) {
+    receiveSize = size;
+}
+    
+int UDPClient::receiveMessage(string& msg) {
+    if(connected) {
+        ofBuffer buffer;
+        buffer.allocate(receiveSize);
+        int r = receiveMessage(buffer);
+        msg = buffer.getData();
+        return r;
+    }
+    return 0;
+}
+    
+int UDPClient::receiveMessage(ofBuffer& buffer) {
+    if(connected) {
+        try {
+            int rec = socket->receiveBytes(buffer.getData(), buffer.size());
+            //int rec = socket->receiveFrom(buffer.getData(), buffer.size(), *socketAddress);
+            //ofLog() << "Receive port: " << socket->address().port();
+            //ofLog() << "Receive port: " << socket->peerAddress().port();
+            return rec;
+        } catch (Poco::Exception &e) {
+            ofLogError() << "* UDPClient receive fail 1: " << e.message();
+            return 0;
+        } catch(std::exception& exc) {
+            ofLogError() << "* UDPClient receive fail 2";
+            return 0;;
+        } catch (...) {
+            ofLogError() << "* UDPClient receive fail 3";
             return 0;
         }
     }

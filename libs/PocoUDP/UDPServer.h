@@ -8,10 +8,11 @@
  UDPServer
  - poco based udp: http://pocoproject.org/docs/Poco.Net.DatagramSocket.html
  - threaded + blocking
- - receiver only
+ - receive and send
 
- TODO: add sending 
+ TODO: add sending (sort of done)
  - can send data if know socketaddress with sendTo(), but because socket is blocking will need to make this useable
+ - this is kind of working- but send can only happen after receive (need to know client address)
  */
 
 namespace ofxPocoNetwork {
@@ -24,7 +25,7 @@ public:
     
     void disconnect();
     
-    void bind(int port); // bind
+    void bind(int port, bool reuseAddress=false); // bind
     bool connected;
     
     void threadedFunction();
@@ -32,10 +33,17 @@ public:
     // receive
     bool hasWaitingMessages();
     void setReceiveSize(int size);
-
-    // send
     bool getNextMessage(ofBuffer& message);
     bool getNextMessage(string& msg);
+    
+    // send
+    void sendMessage(string msg);
+    void sendMessage(ofBuffer& msg);
+    
+    // clients
+    vector<Poco::Net::SocketAddress> clients;
+    
+    void setBroadcast(bool broadcast);
     
 protected:
     
@@ -48,7 +56,7 @@ protected:
     Poco::Net::DatagramSocket* socket;
     
     queue<ofBuffer> receiveBuffers;
-
+    queue<ofBuffer> sendBuffers;
 };
 
 } // namespace ofxPocoNetwork
