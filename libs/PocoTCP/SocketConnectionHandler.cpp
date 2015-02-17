@@ -172,9 +172,9 @@ void SocketConnectionHandler::readHeaderAndMessage() {
         if(availableBytes >= 4) {
             ofBuffer header;
             header.allocate(4);
-            int n = socketPtr->receiveBytes(header.getData(), 4);
+            int n = socketPtr->receiveBytes(header.getBinaryBuffer(), 4);
             if (n > 0) {
-                nextMessageSize = *(int *)header.getData();
+                nextMessageSize = *(int *)header.getBinaryBuffer();
                 isHeaderComplete = true;
                 taken+= n;
             } else {
@@ -188,7 +188,7 @@ void SocketConnectionHandler::readHeaderAndMessage() {
         if(availableBytes >= nextMessageSize) {
             ofBuffer buffer;
             buffer.allocate(nextMessageSize+1);
-            int n = socketPtr->receiveBytes(buffer.getData(), buffer.size());
+            int n = socketPtr->receiveBytes(buffer.getBinaryBuffer(), buffer.size());
             if (n > 0) {
                 taken += n;
                 queueMutex.lock();
@@ -216,11 +216,11 @@ void SocketConnectionHandler::readDelimitedMessage() {
     int availableBytes = socketPtr->available();
     ofBuffer buffer;
     buffer.allocate(availableBytes);
-    int n = socketPtr->receiveBytes(buffer.getData(), availableBytes);
+    int n = socketPtr->receiveBytes(buffer.getBinaryBuffer(), availableBytes);
     if (n > 0) {
         
         // put bytes into a string or char vector
-        copy(buffer.getData(), buffer.getData()+n, back_inserter(delimBuffers));
+        copy(buffer.getBinaryBuffer(), buffer.getBinaryBuffer()+n, back_inserter(delimBuffers));
         //delimBuffer.append(buffer.getData(), n);
         
         // split by delimiter / parse
@@ -253,7 +253,7 @@ void SocketConnectionHandler::readAvailableBytes() {
     int availableBytes = socketPtr->available();
     ofBuffer buffer;
     buffer.allocate(availableBytes);
-    int n = socketPtr->receiveBytes(buffer.getData(), availableBytes);
+    int n = socketPtr->receiveBytes(buffer.getBinaryBuffer(), availableBytes);
     if (n > 0) {
         queueMutex.lock();
         receiveBuffers.push(buffer);
@@ -271,7 +271,7 @@ void SocketConnectionHandler::readFixedSizeMessage() {
     if(availableBytes >= fixedReceiveSize) {
         ofBuffer buffer;
         buffer.allocate(fixedReceiveSize+1);
-        int n = socketPtr->receiveBytes(buffer.getData(), buffer.size());
+        int n = socketPtr->receiveBytes(buffer.getBinaryBuffer(), buffer.size());
         if (n > 0) {
             taken += n;
             queueMutex.lock();
@@ -318,7 +318,7 @@ void SocketConnectionHandler::writeHeaderAndMessage() {
         }
         
         // 2. send main message
-        int nBytesMessage = socketPtr->sendBytes(buffer.getData(), buffer.size());
+        int nBytesMessage = socketPtr->sendBytes(buffer.getBinaryBuffer(), buffer.size());
         if(nBytesMessage <= 0) {
             ofLogError() << "* Send fail 1b (message): disconnecting";
             disconnect();
@@ -356,7 +356,7 @@ void SocketConnectionHandler::writeDelimitedMessage() {
         buffer.append(&delimiter, 1);
         
         // send main message
-        int nBytesMessage = socketPtr->sendBytes(buffer.getData(), buffer.size());
+        int nBytesMessage = socketPtr->sendBytes(buffer.getBinaryBuffer(), buffer.size());
         if(nBytesMessage <= 0) {
             ofLogError() << "* Send fail 1 (none): disconnecting";
             disconnect();
@@ -389,7 +389,7 @@ void SocketConnectionHandler::writeAvailableBytes() {
     while (hasMessagesToSend) {
     
         // send main message
-        int nBytesMessage = socketPtr->sendBytes(buffer.getData(), buffer.size());
+        int nBytesMessage = socketPtr->sendBytes(buffer.getBinaryBuffer(), buffer.size());
         if(nBytesMessage <= 0) {
             ofLogError() << "* Send fail 1 (none): disconnecting";
             disconnect();

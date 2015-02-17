@@ -97,7 +97,7 @@ int UDPClient::sendMessage(string msg) {
 int UDPClient::sendMessage(ofBuffer& buffer) {
     if(connected) {
         try {
-            int sent = socket->sendBytes(buffer.getData(), buffer.size());
+            int sent = socket->sendBytes(buffer.getBinaryBuffer(), buffer.size());
             //int sent = socket->sendTo(buffer.getData(), buffer.size(), *socketAddress);
             return sent;
         } catch (Poco::Exception &e) {
@@ -126,7 +126,7 @@ int UDPClient::receiveMessage(string& msg) {
         ofBuffer buffer;
         buffer.allocate(receiveSize);
         int r = receiveMessage(buffer);
-        msg = buffer.getData();
+        msg = buffer.getBinaryBuffer();
         return r;
     }
     return 0;
@@ -135,7 +135,7 @@ int UDPClient::receiveMessage(string& msg) {
 int UDPClient::receiveMessage(ofBuffer& buffer) {
     if(connected) {
         try {
-            int rec = socket->receiveBytes(buffer.getData(), buffer.size());
+            int rec = socket->receiveBytes(buffer.getBinaryBuffer(), buffer.size());
             //int rec = socket->receiveFrom(buffer.getData(), buffer.size(), *socketAddress);
             //ofLog() << "Receive port: " << socket->address().port();
             //ofLog() << "Receive port: " << socket->peerAddress().port();
