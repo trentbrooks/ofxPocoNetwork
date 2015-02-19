@@ -8,7 +8,6 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     client.connect("localhost",5004);
     client.setMaxSendSize(36000); // default 9216
-    ofLog() << "client setup: " << client.connected;
     
     video.initGrabber(640, 480);
 }
@@ -19,11 +18,9 @@ void ofApp::update(){
     video.update();
     if(video.isFrameNew()) {
         
-        ofSaveImage(video.getPixels(), buffer, OF_IMAGE_FORMAT_JPEG, OF_IMAGE_QUALITY_LOW);
+        ofSaveImage(video.getPixelsRef(), buffer, OF_IMAGE_FORMAT_JPEG, OF_IMAGE_QUALITY_LOW);
         
-        // anything more than 9216 doesnt work?
-        int sentBytes = client.sendMessage(buffer);
-        //ofLog() << "Sent bytes: " << sentBytes;
+        client.sendMessage(buffer);
     }
 }
 

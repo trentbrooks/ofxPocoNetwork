@@ -6,14 +6,22 @@ void ofApp::setup(){
     
     ofSetFrameRate(60);
     
-    client.connect("localhost",5002);
-    //client.connect("localhost", 5002, "localhost", 5002, true);
+    client.connect("localhost",5002,5320,true);
+    //client.connect("127.0.0.1",5002);
     //client.setBroadcast(true);
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
+    while(client.hasWaitingMessages()) {
+        
+        string message;
+        client.getNextMessage(message);
+        receivedMessages.push_back(message);
+        
+    }
 }
 
 //--------------------------------------------------------------
@@ -50,19 +58,11 @@ void ofApp::keyPressed(int key){
 
     // send message
     string message = "Hello from client pressed:" + ofToString(key);
-    int sentBytes = client.sendMessage(message);    
-    if(sentBytes) {
-        //ofLog() << "Sent bytes: " << sentBytes << " : " << message;
+    if(client.sendMessage(message)) {
         sentMessages.push_back(message);
     }
     
-    // receive message (blocks- server must send message if using this)
-    /*string messageR;
-    int recvBytes = client.receiveMessage(messageR);
-    if(recvBytes) {
-        //ofLog() << "Recv bytes: " << recvBytes << " : " << messageR;
-        receivedMessages.push_back(messageR);
-    }*/
+    
 
 }
 

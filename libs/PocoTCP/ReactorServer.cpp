@@ -114,7 +114,7 @@ bool ReactorServer::getNextMessage(int clientId, string& msg) {
     if(clientId >= clients.size()) return false;
     ofBuffer buffer;
     clients[clientId]->getNextMessage(buffer);
-    msg = buffer.getData();
+    msg = buffer.getBinaryBuffer();
     return true;
 }
 

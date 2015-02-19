@@ -28,7 +28,7 @@ void ofApp::update(){
     video.update();
     if(video.isFrameNew()) {
         ofBuffer buffer;
-        ofSaveImage(video.getPixels(), buffer, OF_IMAGE_FORMAT_JPEG, OF_IMAGE_QUALITY_LOW);
+        ofSaveImage(video.getPixelsRef(), buffer, OF_IMAGE_FORMAT_JPEG, OF_IMAGE_QUALITY_LOW);
         
         server.sendMessageToAll(buffer);
     }

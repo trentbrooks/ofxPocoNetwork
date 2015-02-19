@@ -21,6 +21,7 @@ class ofApp : public ofBaseApp{
     
 
     ofxPocoNetwork::UDPServer server;
+    vector<string> sentMessages;
     vector<string> receivedMessages;
     
 };

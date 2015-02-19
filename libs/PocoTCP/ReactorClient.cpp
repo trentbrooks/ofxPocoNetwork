@@ -92,7 +92,7 @@ bool ReactorClient::getNextMessage(string& msg) {
     if(!connected) return false;
     ofBuffer buffer;
     socketHandler->getNextMessage(buffer);
-    msg = buffer.getData();
+    msg = buffer.getBinaryBuffer();
     return true;
 }
 

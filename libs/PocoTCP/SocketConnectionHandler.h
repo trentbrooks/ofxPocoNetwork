@@ -76,6 +76,14 @@ public:
     virtual void processRead();
     virtual void processWrite();
     
+    string getSocketAddress() {
+        return (socketPtr) ? socketPtr->address().toString() : "";
+    }
+    
+    int getSocketPort() {
+        return (socketPtr) ? socketPtr->address().port() : -1;
+    }
+    
 protected:
 
     StreamSocket* socketPtr;
