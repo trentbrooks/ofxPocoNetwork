@@ -142,7 +142,7 @@ bool TCPClient::getNextMessage(string& msg) {
     if(!connected) return false;
     ofBuffer buffer;
     socketHandler->getNextMessage(buffer);
-    msg = buffer.getBinaryBuffer();
+    msg = buffer.getData();
     return true;
 }
 
