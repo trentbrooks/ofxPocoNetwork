@@ -5,15 +5,7 @@
 #include "Poco/Net/SocketAcceptor.h"
 #include "ReactorConnectionHandler.h"
 #include "Poco/Thread.h"
-using Poco::Net::ReadableNotification;
-using Poco::NObserver;
-using Poco::Thread;
-using Poco::Net::ServerSocket;
-using Poco::Net::StreamSocket;
-using Poco::Net::SocketAddress;
-using Poco::Net::SocketReactor;
-using Poco::Net::SocketAcceptor;
-using Poco::Net::IPAddress;
+
 
 /*
  ReactorServer
@@ -72,17 +64,17 @@ protected:
     int fixedReceiveSize;
     
     CustomSocketAcceptor<ReactorConnectionHandler>* acceptor;
-    SocketReactor* reactor;
-    ServerSocket* serverSocket;
-    Thread thread;
+    Poco::Net::SocketReactor* reactor;
+    Poco::Net::ServerSocket* serverSocket;
+    Poco::Thread thread;
     ofMutex mutex;
 };
 
 
 template<typename T>
-class CustomSocketAcceptor : public SocketAcceptor<T> {
+class CustomSocketAcceptor : public Poco::Net::SocketAcceptor<T> {
 public:
-    CustomSocketAcceptor(ServerSocket& socket, SocketReactor& reactor, ReactorServer* server, MessageFraming protocol) :SocketAcceptor<T>(socket,reactor) {
+    CustomSocketAcceptor(Poco::Net::ServerSocket& socket, Poco::Net::SocketReactor& reactor, ReactorServer* server, MessageFraming protocol) : Poco::Net::SocketAcceptor<T>(socket,reactor) {
         raServer = server;
         raProtocol = protocol;
     }    
@@ -90,9 +82,9 @@ public:
     MessageFraming raProtocol;
     
 protected:
-    virtual T* createServiceHandler(StreamSocket& sock) {
+    virtual T* createServiceHandler(Poco::Net::StreamSocket& sock) {
         //T* socketHandler = SocketAcceptor<T>::createServiceHandler(sock);
-        T* socketHandler = new T(sock, *SocketAcceptor<T>::reactor(), raProtocol);
+        T* socketHandler = new T(sock, *Poco::Net::SocketAcceptor<T>::reactor(), raProtocol);
         raServer->onClientConnected(socketHandler);
         return socketHandler;
     }

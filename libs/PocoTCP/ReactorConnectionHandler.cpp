@@ -2,7 +2,7 @@
 
 namespace ofxPocoNetwork {
     
-ReactorConnectionHandler::ReactorConnectionHandler(Socket& socket, SocketReactor& reactor, MessageFraming protocol) :
+ReactorConnectionHandler::ReactorConnectionHandler(Poco::Net::Socket& socket, Poco::Net::SocketReactor& reactor, MessageFraming protocol) :
  _reactor(reactor), _socket(socket), SocketConnectionHandler() {
 
     // initialise socket and message framing
@@ -15,12 +15,12 @@ ReactorConnectionHandler::ReactorConnectionHandler(Socket& socket, SocketReactor
     hasListeners = true;
     
     // add listeners
-    _reactor.addEventHandler(_socket, NObserver<ReactorConnectionHandler, ReadableNotification>	(*this, &ReactorConnectionHandler::onReadable));
-    if(hasWriteHandler) _reactor.addEventHandler(_socket, NObserver<ReactorConnectionHandler, WritableNotification>	(*this, &ReactorConnectionHandler::onWritable));
-    _reactor.addEventHandler(_socket, NObserver<ReactorConnectionHandler, ShutdownNotification>	(*this, &ReactorConnectionHandler::onShutdown));
-    _reactor.addEventHandler(_socket, NObserver<ReactorConnectionHandler, ErrorNotification>	(*this, &ReactorConnectionHandler::onError));
-    _reactor.addEventHandler(_socket, NObserver<ReactorConnectionHandler, IdleNotification>		(*this, &ReactorConnectionHandler::onIdle));
-    if(hasTimeoutHandler) _reactor.addEventHandler(_socket, NObserver<ReactorConnectionHandler, TimeoutNotification>  (*this, &ReactorConnectionHandler::onTimeout));
+     _reactor.addEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::ReadableNotification>	(*this, &ReactorConnectionHandler::onReadable));
+    if(hasWriteHandler) _reactor.addEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::WritableNotification>	(*this, &ReactorConnectionHandler::onWritable));
+    _reactor.addEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::ShutdownNotification>	(*this, &ReactorConnectionHandler::onShutdown));
+    _reactor.addEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::ErrorNotification>	(*this, &ReactorConnectionHandler::onError));
+    _reactor.addEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::IdleNotification>		(*this, &ReactorConnectionHandler::onIdle));
+    if(hasTimeoutHandler) _reactor.addEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::TimeoutNotification>  (*this, &ReactorConnectionHandler::onTimeout));
 
 }
 
@@ -36,12 +36,12 @@ void ReactorConnectionHandler::removeListeners() {
     
     //ScopedLock<ofMutex> lock(mutex);
     if(!hasListeners) return;
-    _reactor.removeEventHandler(_socket, NObserver<ReactorConnectionHandler, ReadableNotification>	(*this, &ReactorConnectionHandler::onReadable));
-    if(hasWriteHandler) _reactor.removeEventHandler(_socket, NObserver<ReactorConnectionHandler, WritableNotification>	(*this, &ReactorConnectionHandler::onWritable));
-    _reactor.removeEventHandler(_socket, NObserver<ReactorConnectionHandler, ShutdownNotification>	(*this, &ReactorConnectionHandler::onShutdown));
-    _reactor.removeEventHandler(_socket, NObserver<ReactorConnectionHandler, ErrorNotification>	(*this, &ReactorConnectionHandler::onError));
-    _reactor.removeEventHandler(_socket, NObserver<ReactorConnectionHandler, IdleNotification>		(*this, &ReactorConnectionHandler::onIdle));
-    if(hasTimeoutHandler) _reactor.removeEventHandler(_socket, NObserver<ReactorConnectionHandler, TimeoutNotification>  (*this, &ReactorConnectionHandler::onTimeout));
+    _reactor.removeEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::ReadableNotification>	(*this, &ReactorConnectionHandler::onReadable));
+    if(hasWriteHandler) _reactor.removeEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::WritableNotification>	(*this, &ReactorConnectionHandler::onWritable));
+    _reactor.removeEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::ShutdownNotification>	(*this, &ReactorConnectionHandler::onShutdown));
+    _reactor.removeEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::ErrorNotification>	(*this, &ReactorConnectionHandler::onError));
+    _reactor.removeEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::IdleNotification>		(*this, &ReactorConnectionHandler::onIdle));
+    if(hasTimeoutHandler) _reactor.removeEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::TimeoutNotification>  (*this, &ReactorConnectionHandler::onTimeout));
     hasListeners = false;
 }
 
@@ -62,7 +62,7 @@ void ReactorConnectionHandler::sendMessage(ofBuffer& message) {
     
     // add write listener/handler if not already added
     if (!hasWriteHandler) {
-        _reactor.addEventHandler(_socket, NObserver<ReactorConnectionHandler, WritableNotification>	(*this, &ReactorConnectionHandler::onWritable));
+        _reactor.addEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::WritableNotification>	(*this, &ReactorConnectionHandler::onWritable));
         hasWriteHandler = true;
         //ofLog() << "Enabled write handler";
     }
@@ -75,7 +75,7 @@ void ReactorConnectionHandler::sendMessage(ofBuffer& message) {
 // will need to manually put them together to re-form messages
 // possibly add different messaging protocols / framing / parsing utilities for this
 //--------------------------------------------------------------
-void ReactorConnectionHandler::onReadable(const AutoPtr<ReadableNotification>& pNf) {
+void ReactorConnectionHandler::onReadable(const Poco::AutoPtr<Poco::Net::ReadableNotification>& pNf) {
     
     //ScopedLock<ofMutex> lock(mutex);
     processRead();
@@ -83,7 +83,7 @@ void ReactorConnectionHandler::onReadable(const AutoPtr<ReadableNotification>& p
 }
 
 //--------------------------------------------------------------
-void ReactorConnectionHandler::onWritable(const AutoPtr<WritableNotification>& pNf) {
+void ReactorConnectionHandler::onWritable(const Poco::AutoPtr<Poco::Net::WritableNotification>& pNf) {
     
     // this event hogs cpu when nothing is happening
     // ScopedLock<ofMutex> lock(mutex);
@@ -94,7 +94,7 @@ void ReactorConnectionHandler::onWritable(const AutoPtr<WritableNotification>& p
     // if sending lots of data removeWriteHandlerOnEmpty should be false
     if(removeWriteHandlerOnEmpty) {
         if(hasWriteHandler && sendBuffers.size() == 0) {
-            _reactor.removeEventHandler(_socket, NObserver<ReactorConnectionHandler, WritableNotification>	(*this, &ReactorConnectionHandler::onWritable));
+            _reactor.removeEventHandler(_socket, Poco::NObserver<ReactorConnectionHandler, Poco::Net::WritableNotification>	(*this, &ReactorConnectionHandler::onWritable));
             hasWriteHandler = false;
          }
     }
@@ -103,24 +103,24 @@ void ReactorConnectionHandler::onWritable(const AutoPtr<WritableNotification>& p
 
 
 //--------------------------------------------------------------
-void ReactorConnectionHandler::onIdle(const AutoPtr<IdleNotification>& pNf) {
+void ReactorConnectionHandler::onIdle(const Poco::AutoPtr<Poco::Net::IdleNotification>& pNf) {
     ofLog() << "idle";
 }
 
 //--------------------------------------------------------------
-void ReactorConnectionHandler::onTimeout(const AutoPtr<TimeoutNotification>& pNf) {
+void ReactorConnectionHandler::onTimeout(const Poco::AutoPtr<Poco::Net::TimeoutNotification>& pNf) {
     ofLog() << "ReactorConnectionHandler timeout";
     if(closeOnTimeout) disconnect();
 }
 
 //--------------------------------------------------------------
-void ReactorConnectionHandler::onError(const AutoPtr<ErrorNotification>& pNf) {
+void ReactorConnectionHandler::onError(const Poco::AutoPtr<Poco::Net::ErrorNotification>& pNf) {
     ofLog() << "ReactorConnectionHandler error";
     disconnect();
 }
 
 //--------------------------------------------------------------
-void ReactorConnectionHandler::onShutdown(const AutoPtr<ShutdownNotification>& pNf) {
+void ReactorConnectionHandler::onShutdown(const Poco::AutoPtr<Poco::Net::ShutdownNotification>& pNf) {
     ofLog() << "ReactorConnectionHandler shutdown";
     disconnect();
 }

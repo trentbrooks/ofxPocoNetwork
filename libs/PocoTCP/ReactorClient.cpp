@@ -34,9 +34,9 @@ void ReactorClient::connect(string ipAddr, int port, MessageFraming protocol) {
     this->address = ipAddr;
     this->port = port;
     
-    reactor = new SocketReactor();
+    reactor = new Poco::Net::SocketReactor();
 
-    socketAddress = new SocketAddress(address, port);
+    socketAddress = new Poco::Net::SocketAddress(address, port);
     connector = new CustomSocketConnector<ReactorConnectionHandler>(*socketAddress, *reactor, this, protocol);
     //reactor->run();
     thread.start(*reactor);

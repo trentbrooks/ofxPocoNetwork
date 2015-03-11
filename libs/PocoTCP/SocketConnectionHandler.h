@@ -8,21 +8,6 @@
 #include "Poco/NObserver.h"
 
 
-using Poco::Net::ReadableNotification;
-using Poco::Net::WritableNotification;
-using Poco::Net::IdleNotification;
-using Poco::Net::TimeoutNotification;
-using Poco::Net::ErrorNotification;
-using Poco::Net::ShutdownNotification;
-using Poco::NObserver;
-using Poco::Thread;
-using Poco::Net::Socket;
-using Poco::Net::StreamSocket;
-using Poco::Net::SocketAddress;
-using Poco::Net::SocketReactor;
-using Poco::AutoPtr;
-using Poco::ScopedLock;
-
 namespace ofxPocoNetwork {
     
 // defaults
@@ -58,7 +43,7 @@ public:
     SocketConnectionHandler();
     ~SocketConnectionHandler();
     
-    void setup(StreamSocket* socket, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
+    void setup(Poco::Net::StreamSocket* socket, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
     
     virtual void disconnect();
     ofEvent<void> disconnectionEvent;
@@ -86,7 +71,7 @@ public:
     
 protected:
 
-    StreamSocket* socketPtr;
+    Poco::Net::StreamSocket* socketPtr;
     MessageFraming messageFraming;
     ofMutex queueMutex; // for the in/out queues
     

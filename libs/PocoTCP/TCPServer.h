@@ -8,10 +8,10 @@
 #include "Poco/Net/Socket.h"
 #include "TCPConnectionHandler.h"
 
+
 namespace ofxPocoNetwork {
 
 class CustomTCPServerConnectionFactory;
-
     
 class TCPServer {
 public:

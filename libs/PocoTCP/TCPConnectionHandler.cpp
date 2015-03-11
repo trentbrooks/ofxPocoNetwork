@@ -3,7 +3,7 @@
 namespace ofxPocoNetwork {
 
 
-TCPConnectionHandler::TCPConnectionHandler(StreamSocket* streamSocket, MessageFraming protocol) : SocketConnectionHandler() {
+TCPConnectionHandler::TCPConnectionHandler(Poco::Net::StreamSocket* streamSocket, MessageFraming protocol) : SocketConnectionHandler() {
 
     // initialise socket and message framing
     setup(streamSocket, protocol);

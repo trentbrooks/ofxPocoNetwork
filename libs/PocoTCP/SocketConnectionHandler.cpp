@@ -11,7 +11,7 @@ SocketConnectionHandler::SocketConnectionHandler() {
     nextMessageSize = 0;
 }
 
-void SocketConnectionHandler::setup(StreamSocket* socket, MessageFraming protocol) {
+void SocketConnectionHandler::setup(Poco::Net::StreamSocket* socket, MessageFraming protocol) {
     
     socketPtr = socket;
     messageFraming = protocol;
@@ -66,12 +66,12 @@ void SocketConnectionHandler::disconnect() {
 
 
 void SocketConnectionHandler::sendMessage(ofBuffer& message) {
-    ScopedLock<ofMutex> lock(queueMutex);
+    Poco::ScopedLock<ofMutex> lock(queueMutex);
     sendBuffers.push(message);
 }
 
 bool SocketConnectionHandler::getNextMessage(ofBuffer& message) {
-    ScopedLock<ofMutex> lock(queueMutex);
+    Poco::ScopedLock<ofMutex> lock(queueMutex);
     if(receiveBuffers.size()) {
         message = receiveBuffers.front();
         receiveBuffers.pop();
@@ -81,19 +81,19 @@ bool SocketConnectionHandler::getNextMessage(ofBuffer& message) {
 }
 
 bool SocketConnectionHandler::hasWaitingMessages() {
-    ScopedLock<ofMutex> lock(queueMutex);
+    Poco::ScopedLock<ofMutex> lock(queueMutex);
     return receiveBuffers.size() > 0;
 }
 
 
 //--------------------------------------------------------------
 void SocketConnectionHandler::setFixedReceiveSize(int s) {
-    ScopedLock<ofMutex> lock(queueMutex);
+    Poco::ScopedLock<ofMutex> lock(queueMutex);
     fixedReceiveSize = s;
 }
 
 void SocketConnectionHandler::setDelimiter(char d) {
-    ScopedLock<ofMutex> lock(queueMutex);
+    Poco::ScopedLock<ofMutex> lock(queueMutex);
     delimiter = d;
 }
 

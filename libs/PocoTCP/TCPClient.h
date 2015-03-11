@@ -6,16 +6,8 @@
 #include "Poco/Net/StreamSocket.h"
 #include "TCPConnectionHandler.h"
 
-using Poco::Net::StreamSocket;
-using Poco::Net::StreamSocket;
-using Poco::Thread;
-using Poco::Timespan;
 
 namespace ofxPocoNetwork {
-    
-    // TODO: add on added, removed callbacks same as reactor framework, handle connections in thread from TCPClientConnectionHandler
-    // this is fucked up messy
-    // need a thread to handle the connections (same as servers connection factory)
     
 class TCPClient {
 public:
@@ -56,11 +48,11 @@ protected:
     bool connected;
     int fixedReceiveSize;
     
-    SocketAddress* socketAddress;
-    StreamSocket* socketStream;
-    Thread thread;
+    Poco::Net::SocketAddress* socketAddress;
+    Poco::Net::StreamSocket* socketStream;
+    Poco::Thread thread;
     
-    Timespan connectTimeout;
+    Poco::Timespan connectTimeout;
     //Poco::Timespan receiveTimeout;
     //Poco::Timespan sendTimeout;
     //Poco::Timespan pollTimeout;
