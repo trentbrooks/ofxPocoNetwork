@@ -62,16 +62,27 @@ public:
     virtual void processWrite();
     
     string getSocketAddress() {
-        return (socketPtr) ? socketPtr->address().toString() : "";
+        return address.toString();
+    }
+    
+    string getPeerAddress() {
+        return peerAddress.toString();
     }
     
     int getSocketPort() {
-        return (socketPtr) ? socketPtr->address().port() : -1;
+        return address.port();
+    }
+    
+    int getPeerPort() {
+        return peerAddress.port();
     }
     
 protected:
 
     Poco::Net::StreamSocket* socketPtr;
+    Poco::Net::SocketAddress peerAddress;
+    Poco::Net::SocketAddress address;
+    
     MessageFraming messageFraming;
     ofMutex queueMutex; // for the in/out queues
     

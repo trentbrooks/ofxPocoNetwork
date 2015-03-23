@@ -16,6 +16,8 @@ void SocketConnectionHandler::setup(Poco::Net::StreamSocket* socket, MessageFram
     socketPtr = socket;
     messageFraming = protocol;
     
+    peerAddress = socketPtr->peerAddress();
+    address = socketPtr->address();
     //Poco::Timespan time(2,0);
     //socketPtr.setSendTimeout(time);
     
@@ -174,7 +176,8 @@ void SocketConnectionHandler::readHeaderAndMessage() {
             header.allocate(4);
             int n = socketPtr->receiveBytes(header.getBinaryBuffer(), 4);
             if (n > 0) {
-                nextMessageSize = *(int *)header.getBinaryBuffer();
+                //nextMessageSize = *(int *)header.getBinaryBuffer();
+                nextMessageSize = *reinterpret_cast<int*>(header.getBinaryBuffer());
                 isHeaderComplete = true;
                 taken+= n;
             } else {
@@ -309,7 +312,8 @@ void SocketConnectionHandler::writeHeaderAndMessage() {
     while (hasMessagesToSend) {
         // 1. first send a 4 byte header with the size of next buffer
         int bufferSize = buffer.size();
-        char* headerData = (char*)(&bufferSize);
+        //char* headerData = (char*)(&bufferSize); // not working with g++4.8 (rpi2)?
+        char* headerData = reinterpret_cast<char*>(&bufferSize);
         int nBytesHeader = socketPtr->sendBytes(headerData, HEADER_BYTES);
         if(nBytesHeader <= 0) {
             ofLogError() << "* Send fail 1a (header): disconnecting";
