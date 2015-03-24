@@ -24,6 +24,6 @@
 // UDP Datagram Sockets
 //#include "UDPClient.h"
 //#include "UDPServer.h"
-#include "UDPSocket.h"
+#include "UDPDatagramSocket.h"
 
 //using namespace ofxPocoNetwork;

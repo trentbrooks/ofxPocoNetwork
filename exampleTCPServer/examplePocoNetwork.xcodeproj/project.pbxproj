@@ -9,7 +9,7 @@
 		<string>46</string>
 		<key>objects</key>
 		<dict>
-			<key>FE13022171FD26EAD0839F7A</key>
+			<key>2521b2266900cbb775d7e87f</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -18,18 +18,18 @@
 				<key>isa</key>
 				<string>PBXFileReference</string>
 				<key>name</key>
-				<string>UDPSocket.h</string>
+				<string>UDPDatagramSocket.h</string>
 				<key>path</key>
-				<string>../../../addons/ofxPocoNetwork/libs/PocoUDP/UDPSocket.h</string>
+				<string>../../../addons/ofxPocoNetwork/libs/PocoUDP/UDPDatagramSocket.h</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>A8591D4ED95196555AF749D1</key>
+			<key>a8591d4ed95196555af749d1</key>
 			<dict>
 				<key>children</key>
 				<array>
-					<string>EBCDB83230731E74670EA688</string>
-					<string>FE13022171FD26EAD0839F7A</string>
+					<string>a94a305be00e3dbce3ee5d8f</string>
+					<string>2521b2266900cbb775d7e87f</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -38,14 +38,14 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
-			<key>ED20434E028BD1CE7BA1DAE1</key>
+			<key>8b50cf20b7ea0064b3634b03</key>
 			<dict>
 				<key>fileRef</key>
-				<string>EBCDB83230731E74670EA688</string>
+				<string>a94a305be00e3dbce3ee5d8f</string>
 				<key>isa</key>
 				<string>PBXBuildFile</string>
 			</dict>
-			<key>EBCDB83230731E74670EA688</key>
+			<key>a94a305be00e3dbce3ee5d8f</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.cpp.cpp</string>
@@ -54,13 +54,13 @@
 				<key>isa</key>
 				<string>PBXFileReference</string>
 				<key>name</key>
-				<string>UDPSocket.cpp</string>
+				<string>UDPDatagramSocket.cpp</string>
 				<key>path</key>
-				<string>../../../addons/ofxPocoNetwork/libs/PocoUDP/UDPSocket.cpp</string>
+				<string>../../../addons/ofxPocoNetwork/libs/PocoUDP/UDPDatagramSocket.cpp</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>03D01C9F307A8CFA622B6A16</key>
+			<key>03d01c9f307a8cfa622b6a16</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -75,14 +75,14 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>FD9EE4D96A3A815A1DCF04A4</key>
+			<key>fd9ee4d96a3a815a1dcf04a4</key>
 			<dict>
 				<key>fileRef</key>
-				<string>CF06225FCEA95C20D3D55FFA</string>
+				<string>cf06225fcea95c20d3d55ffa</string>
 				<key>isa</key>
 				<string>PBXBuildFile</string>
 			</dict>
-			<key>CF06225FCEA95C20D3D55FFA</key>
+			<key>cf06225fcea95c20d3d55ffa</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.cpp.cpp</string>
@@ -97,7 +97,7 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>1439B3F75E127BA1A35A1CFA</key>
+			<key>1439b3f75e127ba1a35a1cfa</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -112,14 +112,14 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>1D1A7F364F67C19DBCD47574</key>
+			<key>1d1a7f364f67c19dbcd47574</key>
 			<dict>
 				<key>fileRef</key>
-				<string>4861ECFBA41D2EF2A2C50F6F</string>
+				<string>4861ecfba41d2ef2a2c50f6f</string>
 				<key>isa</key>
 				<string>PBXBuildFile</string>
 			</dict>
-			<key>4861ECFBA41D2EF2A2C50F6F</key>
+			<key>4861ecfba41d2ef2a2c50f6f</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.cpp.cpp</string>
@@ -134,7 +134,7 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>816C743B95AD67E06772CACC</key>
+			<key>816c743b95ad67e06772cacc</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -149,14 +149,14 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>CCFEA57C6591CBE3FB6647EE</key>
+			<key>ccfea57c6591cbe3fb6647ee</key>
 			<dict>
 				<key>fileRef</key>
-				<string>CA2E52A2CBE566A0C5185C94</string>
+				<string>ca2e52a2cbe566a0c5185c94</string>
 				<key>isa</key>
 				<string>PBXBuildFile</string>
 			</dict>
-			<key>CA2E52A2CBE566A0C5185C94</key>
+			<key>ca2e52a2cbe566a0c5185c94</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.cpp.cpp</string>
@@ -171,7 +171,7 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>D76A5EBB69E877862FCCE4E0</key>
+			<key>d76a5ebb69e877862fcce4e0</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -186,14 +186,14 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>0C4F07DB0D551E40DB9010F1</key>
+			<key>0c4f07db0d551e40db9010f1</key>
 			<dict>
 				<key>fileRef</key>
-				<string>015C8C0E339C1770CBA1806D</string>
+				<string>015c8c0e339c1770cba1806d</string>
 				<key>isa</key>
 				<string>PBXBuildFile</string>
 			</dict>
-			<key>015C8C0E339C1770CBA1806D</key>
+			<key>015c8c0e339c1770cba1806d</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.cpp.cpp</string>
@@ -208,7 +208,7 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>C4CD9418B1DB11EB4B9E2CC4</key>
+			<key>c4cd9418b1db11eb4b9e2cc4</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -223,14 +223,14 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>09545FBF282453CF185D572A</key>
+			<key>09545fbf282453cf185d572a</key>
 			<dict>
 				<key>fileRef</key>
-				<string>A9407FAEB32D9BF74E0973C3</string>
+				<string>a9407faeb32d9bf74e0973c3</string>
 				<key>isa</key>
 				<string>PBXBuildFile</string>
 			</dict>
-			<key>A9407FAEB32D9BF74E0973C3</key>
+			<key>a9407faeb32d9bf74e0973c3</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.cpp.cpp</string>
@@ -245,7 +245,7 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>FCB9B40341AC535043B2AC43</key>
+			<key>fcb9b40341ac535043b2ac43</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -260,14 +260,14 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>B841A131A3C2DBE63BD949B0</key>
+			<key>b841a131a3c2dbe63bd949b0</key>
 			<dict>
 				<key>fileRef</key>
-				<string>02C89B6381E24855D591AEDD</string>
+				<string>02c89b6381e24855d591aedd</string>
 				<key>isa</key>
 				<string>PBXBuildFile</string>
 			</dict>
-			<key>02C89B6381E24855D591AEDD</key>
+			<key>02c89b6381e24855d591aedd</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.cpp.cpp</string>
@@ -282,7 +282,7 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>6A698E4A48197A8925EC1532</key>
+			<key>6a698e4a48197a8925ec1532</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -297,24 +297,24 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>53CFD7B8A4F50660E218D509</key>
+			<key>53cfd7b8a4f50660e218d509</key>
 			<dict>
 				<key>children</key>
 				<array>
-					<string>F118C40A0B61C02AAD835480</string>
-					<string>6A698E4A48197A8925EC1532</string>
-					<string>02C89B6381E24855D591AEDD</string>
-					<string>FCB9B40341AC535043B2AC43</string>
-					<string>A9407FAEB32D9BF74E0973C3</string>
-					<string>C4CD9418B1DB11EB4B9E2CC4</string>
-					<string>015C8C0E339C1770CBA1806D</string>
-					<string>D76A5EBB69E877862FCCE4E0</string>
-					<string>CA2E52A2CBE566A0C5185C94</string>
-					<string>816C743B95AD67E06772CACC</string>
-					<string>4861ECFBA41D2EF2A2C50F6F</string>
-					<string>1439B3F75E127BA1A35A1CFA</string>
-					<string>CF06225FCEA95C20D3D55FFA</string>
-					<string>03D01C9F307A8CFA622B6A16</string>
+					<string>f118c40a0b61c02aad835480</string>
+					<string>6a698e4a48197a8925ec1532</string>
+					<string>02c89b6381e24855d591aedd</string>
+					<string>fcb9b40341ac535043b2ac43</string>
+					<string>a9407faeb32d9bf74e0973c3</string>
+					<string>c4cd9418b1db11eb4b9e2cc4</string>
+					<string>015c8c0e339c1770cba1806d</string>
+					<string>d76a5ebb69e877862fcce4e0</string>
+					<string>ca2e52a2cbe566a0c5185c94</string>
+					<string>816c743b95ad67e06772cacc</string>
+					<string>4861ecfba41d2ef2a2c50f6f</string>
+					<string>1439b3f75e127ba1a35a1cfa</string>
+					<string>cf06225fcea95c20d3d55ffa</string>
+					<string>03d01c9f307a8cfa622b6a16</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -323,12 +323,12 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
-			<key>569E66B422131863F4692C3A</key>
+			<key>569e66b422131863f4692c3a</key>
 			<dict>
 				<key>children</key>
 				<array>
-					<string>53CFD7B8A4F50660E218D509</string>
-					<string>A8591D4ED95196555AF749D1</string>
+					<string>53cfd7b8a4f50660e218d509</string>
+					<string>a8591d4ed95196555af749d1</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -337,14 +337,14 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
-			<key>7891E4B0BF0CA36ACC3029CF</key>
+			<key>7891e4b0bf0ca36acc3029cf</key>
 			<dict>
 				<key>fileRef</key>
-				<string>F118C40A0B61C02AAD835480</string>
+				<string>f118c40a0b61c02aad835480</string>
 				<key>isa</key>
 				<string>PBXBuildFile</string>
 			</dict>
-			<key>F118C40A0B61C02AAD835480</key>
+			<key>f118c40a0b61c02aad835480</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.cpp.cpp</string>
@@ -359,11 +359,11 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>EE8523C3F7E4C709F72D1764</key>
+			<key>ee8523c3f7e4c709f72d1764</key>
 			<dict>
 				<key>children</key>
 				<array>
-					<string>7D6847F9446E1B6FC5F6D559</string>
+					<string>7d6847f9446e1b6fc5f6d559</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -372,12 +372,12 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
-			<key>B30A15D96489D645EB6B1143</key>
+			<key>b30a15d96489d645eb6b1143</key>
 			<dict>
 				<key>children</key>
 				<array>
-					<string>EE8523C3F7E4C709F72D1764</string>
-					<string>569E66B422131863F4692C3A</string>
+					<string>ee8523c3f7e4c709f72d1764</string>
+					<string>569e66b422131863f4692c3a</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -386,7 +386,7 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
-			<key>7D6847F9446E1B6FC5F6D559</key>
+			<key>7d6847f9446e1b6fc5f6d559</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -405,7 +405,7 @@
 			<dict>
 				<key>children</key>
 				<array>
-					<string>B30A15D96489D645EB6B1143</string>
+					<string>b30a15d96489d645eb6b1143</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -938,14 +938,14 @@
 				<array>
 					<string>E4B69E200A3A1BDC003C02F2</string>
 					<string>E4B69E210A3A1BDC003C02F2</string>
-					<string>7891E4B0BF0CA36ACC3029CF</string>
-					<string>B841A131A3C2DBE63BD949B0</string>
-					<string>09545FBF282453CF185D572A</string>
-					<string>0C4F07DB0D551E40DB9010F1</string>
-					<string>CCFEA57C6591CBE3FB6647EE</string>
-					<string>1D1A7F364F67C19DBCD47574</string>
-					<string>FD9EE4D96A3A815A1DCF04A4</string>
-					<string>ED20434E028BD1CE7BA1DAE1</string>
+					<string>7891e4b0bf0ca36acc3029cf</string>
+					<string>b841a131a3c2dbe63bd949b0</string>
+					<string>09545fbf282453cf185d572a</string>
+					<string>0c4f07db0d551e40db9010f1</string>
+					<string>ccfea57c6591cbe3fb6647ee</string>
+					<string>1d1a7f364f67c19dbcd47574</string>
+					<string>fd9ee4d96a3a815a1dcf04a4</string>
+					<string>8b50cf20b7ea0064b3634b03</string>
 				</array>
 				<key>isa</key>
 				<string>PBXSourcesBuildPhase</string>
