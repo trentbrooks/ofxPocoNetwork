@@ -34,8 +34,8 @@ void ReactorServer::start(int port, MessageFraming protocol) {
     
     serverPort = port;
     
-    reactor = new SocketReactor();
-    serverSocket = new ServerSocket(serverPort);
+    reactor = new Poco::Net::SocketReactor();
+    serverSocket = new Poco::Net::ServerSocket(serverPort);
     acceptor = new CustomSocketAcceptor<ReactorConnectionHandler>(*serverSocket, *reactor, this, protocol);
     //reactor->run();
     thread.start(*reactor);

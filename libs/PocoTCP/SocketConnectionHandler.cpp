@@ -11,11 +11,13 @@ SocketConnectionHandler::SocketConnectionHandler() {
     nextMessageSize = 0;
 }
 
-void SocketConnectionHandler::setup(StreamSocket* socket, MessageFraming protocol) {
+void SocketConnectionHandler::setup(Poco::Net::StreamSocket* socket, MessageFraming protocol) {
     
     socketPtr = socket;
     messageFraming = protocol;
     
+    peerAddress = socketPtr->peerAddress();
+    address = socketPtr->address();
     //Poco::Timespan time(2,0);
     //socketPtr.setSendTimeout(time);
     
@@ -66,12 +68,12 @@ void SocketConnectionHandler::disconnect() {
 
 
 void SocketConnectionHandler::sendMessage(ofBuffer& message) {
-    ScopedLock<ofMutex> lock(queueMutex);
+    Poco::ScopedLock<ofMutex> lock(queueMutex);
     sendBuffers.push(message);
 }
 
 bool SocketConnectionHandler::getNextMessage(ofBuffer& message) {
-    ScopedLock<ofMutex> lock(queueMutex);
+    Poco::ScopedLock<ofMutex> lock(queueMutex);
     if(receiveBuffers.size()) {
         message = receiveBuffers.front();
         receiveBuffers.pop();
@@ -81,19 +83,19 @@ bool SocketConnectionHandler::getNextMessage(ofBuffer& message) {
 }
 
 bool SocketConnectionHandler::hasWaitingMessages() {
-    ScopedLock<ofMutex> lock(queueMutex);
+    Poco::ScopedLock<ofMutex> lock(queueMutex);
     return receiveBuffers.size() > 0;
 }
 
 
 //--------------------------------------------------------------
 void SocketConnectionHandler::setFixedReceiveSize(int s) {
-    ScopedLock<ofMutex> lock(queueMutex);
+    Poco::ScopedLock<ofMutex> lock(queueMutex);
     fixedReceiveSize = s;
 }
 
 void SocketConnectionHandler::setDelimiter(char d) {
-    ScopedLock<ofMutex> lock(queueMutex);
+    Poco::ScopedLock<ofMutex> lock(queueMutex);
     delimiter = d;
 }
 
@@ -172,9 +174,10 @@ void SocketConnectionHandler::readHeaderAndMessage() {
         if(availableBytes >= 4) {
             ofBuffer header;
             header.allocate(4);
-            int n = socketPtr->receiveBytes(header.getData(), 4);
+            int n = socketPtr->receiveBytes(header.getBinaryBuffer(), 4);
             if (n > 0) {
-                nextMessageSize = *(int *)header.getData();
+                //nextMessageSize = *(int *)header.getBinaryBuffer();
+                nextMessageSize = *reinterpret_cast<int*>(header.getBinaryBuffer());
                 isHeaderComplete = true;
                 taken+= n;
             } else {
@@ -188,7 +191,7 @@ void SocketConnectionHandler::readHeaderAndMessage() {
         if(availableBytes >= nextMessageSize) {
             ofBuffer buffer;
             buffer.allocate(nextMessageSize+1);
-            int n = socketPtr->receiveBytes(buffer.getData(), buffer.size());
+            int n = socketPtr->receiveBytes(buffer.getBinaryBuffer(), buffer.size());
             if (n > 0) {
                 taken += n;
                 queueMutex.lock();
@@ -216,11 +219,11 @@ void SocketConnectionHandler::readDelimitedMessage() {
     int availableBytes = socketPtr->available();
     ofBuffer buffer;
     buffer.allocate(availableBytes);
-    int n = socketPtr->receiveBytes(buffer.getData(), availableBytes);
+    int n = socketPtr->receiveBytes(buffer.getBinaryBuffer(), availableBytes);
     if (n > 0) {
         
         // put bytes into a string or char vector
-        copy(buffer.getData(), buffer.getData()+n, back_inserter(delimBuffers));
+        copy(buffer.getBinaryBuffer(), buffer.getBinaryBuffer()+n, back_inserter(delimBuffers));
         //delimBuffer.append(buffer.getData(), n);
         
         // split by delimiter / parse
@@ -253,7 +256,7 @@ void SocketConnectionHandler::readAvailableBytes() {
     int availableBytes = socketPtr->available();
     ofBuffer buffer;
     buffer.allocate(availableBytes);
-    int n = socketPtr->receiveBytes(buffer.getData(), availableBytes);
+    int n = socketPtr->receiveBytes(buffer.getBinaryBuffer(), availableBytes);
     if (n > 0) {
         queueMutex.lock();
         receiveBuffers.push(buffer);
@@ -271,7 +274,7 @@ void SocketConnectionHandler::readFixedSizeMessage() {
     if(availableBytes >= fixedReceiveSize) {
         ofBuffer buffer;
         buffer.allocate(fixedReceiveSize+1);
-        int n = socketPtr->receiveBytes(buffer.getData(), buffer.size());
+        int n = socketPtr->receiveBytes(buffer.getBinaryBuffer(), buffer.size());
         if (n > 0) {
             taken += n;
             queueMutex.lock();
@@ -309,7 +312,8 @@ void SocketConnectionHandler::writeHeaderAndMessage() {
     while (hasMessagesToSend) {
         // 1. first send a 4 byte header with the size of next buffer
         int bufferSize = buffer.size();
-        char* headerData = (char*)(&bufferSize);
+        //char* headerData = (char*)(&bufferSize); // not working with g++4.8 (rpi2)?
+        char* headerData = reinterpret_cast<char*>(&bufferSize);
         int nBytesHeader = socketPtr->sendBytes(headerData, HEADER_BYTES);
         if(nBytesHeader <= 0) {
             ofLogError() << "* Send fail 1a (header): disconnecting";
@@ -318,7 +322,7 @@ void SocketConnectionHandler::writeHeaderAndMessage() {
         }
         
         // 2. send main message
-        int nBytesMessage = socketPtr->sendBytes(buffer.getData(), buffer.size());
+        int nBytesMessage = socketPtr->sendBytes(buffer.getBinaryBuffer(), buffer.size());
         if(nBytesMessage <= 0) {
             ofLogError() << "* Send fail 1b (message): disconnecting";
             disconnect();
@@ -356,7 +360,7 @@ void SocketConnectionHandler::writeDelimitedMessage() {
         buffer.append(&delimiter, 1);
         
         // send main message
-        int nBytesMessage = socketPtr->sendBytes(buffer.getData(), buffer.size());
+        int nBytesMessage = socketPtr->sendBytes(buffer.getBinaryBuffer(), buffer.size());
         if(nBytesMessage <= 0) {
             ofLogError() << "* Send fail 1 (none): disconnecting";
             disconnect();
@@ -389,7 +393,7 @@ void SocketConnectionHandler::writeAvailableBytes() {
     while (hasMessagesToSend) {
     
         // send main message
-        int nBytesMessage = socketPtr->sendBytes(buffer.getData(), buffer.size());
+        int nBytesMessage = socketPtr->sendBytes(buffer.getBinaryBuffer(), buffer.size());
         if(nBytesMessage <= 0) {
             ofLogError() << "* Send fail 1 (none): disconnecting";
             disconnect();

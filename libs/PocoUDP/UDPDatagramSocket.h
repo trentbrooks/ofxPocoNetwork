@@ -19,11 +19,11 @@ namespace ofxPocoNetwork {
         Poco::Net::SocketAddress address;
     };
     
-    class UDPSocket : public ofThread {
+    class UDPDatagramSocket : public ofThread {
     public:
         
-        UDPSocket();
-        virtual ~UDPSocket();
+        UDPDatagramSocket();
+        virtual ~UDPDatagramSocket();
         
         void disconnect();
         bool isConnected() { return connected; }
@@ -95,7 +95,7 @@ namespace ofxPocoNetwork {
     };
     
     // shortcut server + client types
-    typedef UDPSocket UDPClient;
-    typedef UDPSocket UDPServer;
+    typedef UDPDatagramSocket UDPClient;
+    typedef UDPDatagramSocket UDPServer;
     
 } // namespace ofxPocoNetwork

@@ -9,21 +9,6 @@
 #include "Poco/NObserver.h"
 
 
-using Poco::Net::ReadableNotification;
-using Poco::Net::WritableNotification;
-using Poco::Net::IdleNotification;
-using Poco::Net::TimeoutNotification;
-using Poco::Net::ErrorNotification;
-using Poco::Net::ShutdownNotification;
-using Poco::NObserver;
-using Poco::Thread;
-using Poco::Net::Socket;
-using Poco::Net::StreamSocket;
-using Poco::Net::SocketAddress;
-using Poco::Net::SocketReactor;
-using Poco::AutoPtr;
-using Poco::ScopedLock;
-
 /*
  ReactorConnectionHandler
  - part of the reactor acceptor framework (use with ReactorServer and ReactorClient)
@@ -50,19 +35,19 @@ namespace ofxPocoNetwork {
 class ReactorConnectionHandler : public SocketConnectionHandler {
 public:
     
-    ReactorConnectionHandler(Socket& socket, SocketReactor& reactor, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
+    ReactorConnectionHandler(Poco::Net::Socket& socket, Poco::Net::SocketReactor& reactor, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
     ~ReactorConnectionHandler();
             
     void removeListeners();
     void disconnect();
     
     // events
-    void onReadable(const AutoPtr<ReadableNotification>& pNf);
-    void onWritable(const AutoPtr<WritableNotification>& pNf);
-    void onIdle(const AutoPtr<IdleNotification>& pNf);
-    void onTimeout(const AutoPtr<TimeoutNotification>& pNf);
-    void onError(const AutoPtr<ErrorNotification>& pNf);
-    void onShutdown(const AutoPtr<ShutdownNotification>& pNf);
+    void onReadable(const Poco::AutoPtr<Poco::Net::ReadableNotification>& pNf);
+    void onWritable(const Poco::AutoPtr<Poco::Net::WritableNotification>& pNf);
+    void onIdle(const Poco::AutoPtr<Poco::Net::IdleNotification>& pNf);
+    void onTimeout(const Poco::AutoPtr<Poco::Net::TimeoutNotification>& pNf);
+    void onError(const Poco::AutoPtr<Poco::Net::ErrorNotification>& pNf);
+    void onShutdown(const Poco::AutoPtr<Poco::Net::ShutdownNotification>& pNf);
     
     // override send
     virtual void sendMessage(ofBuffer& message);
@@ -72,8 +57,8 @@ public:
     
 protected:
     
-    SocketReactor& _reactor;
-    StreamSocket _socket;
+    Poco::Net::SocketReactor& _reactor;
+    Poco::Net::StreamSocket _socket;
     
     // extra timeout and write handling
     bool hasTimeoutHandler;

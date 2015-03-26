@@ -9,11 +9,6 @@
 #include "Poco/Net/Socket.h"
 #include "SocketConnectionHandler.h"
 
-using Poco::ScopedLock;
-using Poco::Net::Socket;
-using Poco::Net::StreamSocket;
-using Poco::Net::SocketAddress;
-using Poco::Net::TCPServerConnection;
 
 namespace ofxPocoNetwork {
     
@@ -27,7 +22,7 @@ namespace ofxPocoNetwork {
 // TCPConnectionHandler is a base class of TCPServerConnectionHandler or TCPClientConnectionHandler
 class TCPConnectionHandler : public SocketConnectionHandler {
 public:
-    TCPConnectionHandler(StreamSocket* streamSocket, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
+    TCPConnectionHandler(Poco::Net::StreamSocket* streamSocket, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
     ~TCPConnectionHandler();
     
     void disconnect();
@@ -44,7 +39,7 @@ protected:
 // server only version of TCPConnectionHandler also extending Poco::Net::TCPServerConnection
 class TCPServerConnectionHandler : public Poco::Net::TCPServerConnection, public TCPConnectionHandler {
 public:
-    TCPServerConnectionHandler(const StreamSocket& streamSocket, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE) : Poco::Net::TCPServerConnection(streamSocket), TCPConnectionHandler(&socket(), protocol) {
+    TCPServerConnectionHandler(const Poco::Net::StreamSocket& streamSocket, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE) : Poco::Net::TCPServerConnection(streamSocket), TCPConnectionHandler(&socket(), protocol) {
     }
     
     void run() {
@@ -55,7 +50,7 @@ public:
 // client only version of TCPConnectionHandler with a runnable
 class TCPClientConnectionHandler : public Poco::Runnable, public TCPConnectionHandler {
 public:
-    TCPClientConnectionHandler(StreamSocket* streamSocket, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE) : TCPConnectionHandler(streamSocket, protocol) {
+    TCPClientConnectionHandler(Poco::Net::StreamSocket* streamSocket, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE) : TCPConnectionHandler(streamSocket, protocol) {
     }
     
     void run() {

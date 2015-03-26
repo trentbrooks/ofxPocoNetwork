@@ -1,10 +1,10 @@
 
-#include "UDPSocket.h"
+#include "UDPDatagramSocket.h"
 
 namespace ofxPocoNetwork {
     
     
-    UDPSocket::UDPSocket() {
+    UDPDatagramSocket::UDPDatagramSocket() {
         receiveSize = 256;
         sleepTime = 16;
         port = sourcePort = 0;
@@ -15,22 +15,22 @@ namespace ofxPocoNetwork {
         socket = NULL;
     }
     
-    UDPSocket::~UDPSocket() {
+    UDPDatagramSocket::~UDPDatagramSocket() {
         
         disconnect();
     }
     
-    void UDPSocket::disconnect() {
+    void UDPDatagramSocket::disconnect() {
         waitForThread();
         connected = false;
         if(destinationAddress) delete destinationAddress;
         if(sourceAddress) delete sourceAddress;
         if(socket) delete socket;
-        ofLog() << "Disconnected UDPSocket.";
+        ofLog() << "Disconnected UDPDatagramSocket.";
     }
     
     
-    void UDPSocket::bind(int port, bool reuseAddress){
+    void UDPDatagramSocket::bind(int port, bool reuseAddress){
         
         if(connected) disconnect();
         
@@ -53,7 +53,7 @@ namespace ofxPocoNetwork {
         if(!isThreadRunning()) startThread();
     }
     
-    void UDPSocket::connect(string ipAddr, int port) {
+    void UDPDatagramSocket::connect(string ipAddr, int port) {
         
         if(connected) disconnect();
         
@@ -87,7 +87,7 @@ namespace ofxPocoNetwork {
         if(!isThreadRunning()) startThread();
     }
     
-    void UDPSocket::connect(string ipAddr, int port, int sourcePort, bool reuseAddress) {
+    void UDPDatagramSocket::connect(string ipAddr, int port, int sourcePort, bool reuseAddress) {
         
         if(connected) disconnect();
         
@@ -128,7 +128,7 @@ namespace ofxPocoNetwork {
     }
     
     
-    void UDPSocket::setBroadcast(bool broadcast) {
+    void UDPDatagramSocket::setBroadcast(bool broadcast) {
         if(connected) {
             socket->setBroadcast(broadcast);
         }
@@ -136,13 +136,13 @@ namespace ofxPocoNetwork {
     
     // connections / clients
     // for server only
-    int UDPSocket::getNumClients() {
+    int UDPDatagramSocket::getNumClients() {
         return clients.size();
     }
     
     // thread
     //--------------------------------------------------------------
-    void UDPSocket::threadedFunction(){
+    void UDPDatagramSocket::threadedFunction(){
         
         while( isThreadRunning() ){
             
@@ -162,7 +162,7 @@ namespace ofxPocoNetwork {
     }
     
     //--------------------------------------------------------------
-    void UDPSocket::processRead() {
+    void UDPDatagramSocket::processRead() {
         
         try {
             
@@ -219,7 +219,7 @@ namespace ofxPocoNetwork {
         }
     }
     
-    void UDPSocket::processWrite() {
+    void UDPDatagramSocket::processWrite() {
         
         try {
             
@@ -280,18 +280,18 @@ namespace ofxPocoNetwork {
     
     // receive
     //--------------------------------------------------------------
-    void UDPSocket::setReceiveSize(int size) {
+    void UDPDatagramSocket::setReceiveSize(int size) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         receiveSize = size;
     }
     
-    bool UDPSocket::hasWaitingMessages() {
+    bool UDPDatagramSocket::hasWaitingMessages() {
         Poco::ScopedLock<ofMutex> lock(mutex);
         return receiveBuffers.size() > 0;
         //if(clientId >= clients.size()) return false;
     }
     
-    bool UDPSocket::getNextMessage(ofBuffer& message) {
+    bool UDPDatagramSocket::getNextMessage(ofBuffer& message) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(receiveBuffers.size()) {
             message = receiveBuffers.front().buffer;
@@ -301,7 +301,7 @@ namespace ofxPocoNetwork {
         return false;
     }
     
-    bool UDPSocket::getNextMessage(string& msg) {
+    bool UDPDatagramSocket::getNextMessage(string& msg) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(receiveBuffers.size()) {
             msg = receiveBuffers.front().buffer.getData();
@@ -311,7 +311,7 @@ namespace ofxPocoNetwork {
         return false;
     }
     
-    bool UDPSocket::getNextMessage(ofBuffer& message, Poco::Net::SocketAddress &emptyAddress) {
+    bool UDPDatagramSocket::getNextMessage(ofBuffer& message, Poco::Net::SocketAddress &emptyAddress) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(receiveBuffers.size()) {
             message = receiveBuffers.front().buffer;
@@ -322,7 +322,7 @@ namespace ofxPocoNetwork {
         return false;
     }
     
-    bool UDPSocket::getNextMessage(string& msg, Poco::Net::SocketAddress &emptyAddress) {
+    bool UDPDatagramSocket::getNextMessage(string& msg, Poco::Net::SocketAddress &emptyAddress) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(receiveBuffers.size()) {
             msg = receiveBuffers.front().buffer.getData();
@@ -336,7 +336,7 @@ namespace ofxPocoNetwork {
     
     // sending - for clients
     //--------------------------------------------------------------
-    bool UDPSocket::sendMessage(string msg) {
+    bool UDPDatagramSocket::sendMessage(string msg) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(!checkClientValid()) return false;
         
@@ -348,7 +348,7 @@ namespace ofxPocoNetwork {
         return true;
     }
     
-    bool UDPSocket::sendMessage(ofBuffer& buffer) {
+    bool UDPDatagramSocket::sendMessage(ofBuffer& buffer) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(!checkClientValid()) return false;
         
@@ -362,7 +362,7 @@ namespace ofxPocoNetwork {
     
     // sending - for server
     //--------------------------------------------------------------
-    bool UDPSocket::sendMessage(Poco::Net::SocketAddress &toAddress, string msg) {
+    bool UDPDatagramSocket::sendMessage(Poco::Net::SocketAddress &toAddress, string msg) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(!checkServerValid()) return false;
         
@@ -375,7 +375,7 @@ namespace ofxPocoNetwork {
     }
     
     
-    bool UDPSocket::sendMessage(Poco::Net::SocketAddress &toAddress, ofBuffer& buffer) {
+    bool UDPDatagramSocket::sendMessage(Poco::Net::SocketAddress &toAddress, ofBuffer& buffer) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(!checkServerValid()) return false;
         
@@ -387,7 +387,7 @@ namespace ofxPocoNetwork {
         return true;
     }
     
-    bool UDPSocket::sendMessageToAll(string msg) {
+    bool UDPDatagramSocket::sendMessageToAll(string msg) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(!checkServerValid()) return false;
         
@@ -401,7 +401,7 @@ namespace ofxPocoNetwork {
         return true;
     }
     
-    bool UDPSocket::sendMessageToAll(ofBuffer& msg) {
+    bool UDPDatagramSocket::sendMessageToAll(ofBuffer& msg) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(!checkServerValid()) return false;
         
@@ -415,7 +415,7 @@ namespace ofxPocoNetwork {
         return true;
     }
     
-    bool UDPSocket::checkServerValid() {
+    bool UDPDatagramSocket::checkServerValid() {
         if(!connected) {
             ofLogError() << "Server fail- not binded.";
             return false;
@@ -431,7 +431,7 @@ namespace ofxPocoNetwork {
         return true;
     }
     
-    bool UDPSocket::checkClientValid() {
+    bool UDPDatagramSocket::checkClientValid() {
         if(!connected) {
             ofLogError() << "Client fail- not connected.";
             return false;
@@ -446,7 +446,7 @@ namespace ofxPocoNetwork {
     
     // advanced- internal poco buffer sizes
     //--------------------------------------------------------------
-    void UDPSocket::setMaxSendSize(int size) {
+    void UDPDatagramSocket::setMaxSendSize(int size) {
         if(connected) {
             
             // advanced: change pocos max internal buffer send size- default send is 9216
@@ -455,7 +455,7 @@ namespace ofxPocoNetwork {
         }
     }
     
-    int UDPSocket::getMaxSendSize() {
+    int UDPDatagramSocket::getMaxSendSize() {
         if(connected) {
             return socket->getSendBufferSize();
         }

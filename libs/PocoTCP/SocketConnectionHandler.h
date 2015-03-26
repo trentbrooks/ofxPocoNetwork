@@ -8,21 +8,6 @@
 #include "Poco/NObserver.h"
 
 
-using Poco::Net::ReadableNotification;
-using Poco::Net::WritableNotification;
-using Poco::Net::IdleNotification;
-using Poco::Net::TimeoutNotification;
-using Poco::Net::ErrorNotification;
-using Poco::Net::ShutdownNotification;
-using Poco::NObserver;
-using Poco::Thread;
-using Poco::Net::Socket;
-using Poco::Net::StreamSocket;
-using Poco::Net::SocketAddress;
-using Poco::Net::SocketReactor;
-using Poco::AutoPtr;
-using Poco::ScopedLock;
-
 namespace ofxPocoNetwork {
     
 // defaults
@@ -58,7 +43,7 @@ public:
     SocketConnectionHandler();
     ~SocketConnectionHandler();
     
-    void setup(StreamSocket* socket, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
+    void setup(Poco::Net::StreamSocket* socket, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
     
     virtual void disconnect();
     ofEvent<void> disconnectionEvent;
@@ -77,16 +62,27 @@ public:
     virtual void processWrite();
     
     string getSocketAddress() {
-        return (socketPtr) ? socketPtr->address().toString() : "";
+        return address.toString();
+    }
+    
+    string getPeerAddress() {
+        return peerAddress.toString();
     }
     
     int getSocketPort() {
-        return (socketPtr) ? socketPtr->address().port() : -1;
+        return address.port();
+    }
+    
+    int getPeerPort() {
+        return peerAddress.port();
     }
     
 protected:
 
-    StreamSocket* socketPtr;
+    Poco::Net::StreamSocket* socketPtr;
+    Poco::Net::SocketAddress peerAddress;
+    Poco::Net::SocketAddress address;
+    
     MessageFraming messageFraming;
     ofMutex queueMutex; // for the in/out queues
     
