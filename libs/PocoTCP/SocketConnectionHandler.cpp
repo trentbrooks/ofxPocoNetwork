@@ -168,6 +168,11 @@ void SocketConnectionHandler::processWrite() {
 // not sure what happens if sender sends more than we are reading?
 void SocketConnectionHandler::readHeaderAndMessage() {
     
+    if(!socketPtr) {
+        ofLogError() << "* readHeaderAndMessage error - no socketPtr";
+        return;
+    }
+    
     int availableBytes = socketPtr->available();
     int taken = 0;
     if(!isHeaderComplete) {
@@ -178,7 +183,6 @@ void SocketConnectionHandler::readHeaderAndMessage() {
             if (n > 0) {
                 //nextMessageSize = *(int *)header.getBinaryBuffer();
                 nextMessageSize = *reinterpret_cast<int*>(header.getBinaryBuffer());
-                ofLog() << "message size: " << nextMessageSize;
                 isHeaderComplete = true;
                 taken += n;
             } else {
@@ -193,7 +197,6 @@ void SocketConnectionHandler::readHeaderAndMessage() {
             ofBuffer buffer;
             buffer.allocate(nextMessageSize);
             int n = socketPtr->receiveBytes(buffer.getBinaryBuffer(), buffer.size());
-            ofLog() << "buffer: " << buffer.getData();
             if (n > 0) {
                 taken += n;
                 queueMutex.lock();
@@ -208,8 +211,10 @@ void SocketConnectionHandler::readHeaderAndMessage() {
     }
     
     // if still more bytes - run same function recursively?
+    // weird crash with this - availableBytes had no value yet was greater than 0
     if(availableBytes > taken) {
-        readHeaderAndMessage();
+        //readHeaderAndMessage();
+        //ofLogError() << "* Error with available/taken: " << availableBytes << "/" << taken;
     }
 
 }
@@ -217,6 +222,11 @@ void SocketConnectionHandler::readHeaderAndMessage() {
 // custom message protocol / framing
 // read bytes available, split messages by delimiter
 void SocketConnectionHandler::readDelimitedMessage() {
+    
+    if(!socketPtr) {
+        ofLogError() << "* readDelimitedMessage error - no socketPtr";
+        return;
+    }
     
     int availableBytes = socketPtr->available();
     ofBuffer buffer;
@@ -255,6 +265,12 @@ void SocketConnectionHandler::readDelimitedMessage() {
 // NO message protocol / framing
 // just reads whatever's available and stores as ofBuffer's
 void SocketConnectionHandler::readAvailableBytes() {
+    
+    if(!socketPtr) {
+        ofLogError() << "* readAvailableBytes error - no socketPtr";
+        return;
+    }
+    
     int availableBytes = socketPtr->available();
     ofBuffer buffer;
     buffer.allocate(availableBytes);
@@ -270,6 +286,11 @@ void SocketConnectionHandler::readAvailableBytes() {
 }
 
 void SocketConnectionHandler::readFixedSizeMessage() {
+    
+    if(!socketPtr) {
+        ofLogError() << "* readFixedSizeMessage error - no socketPtr";
+        return;
+    }
     
     int availableBytes = socketPtr->available();
     int taken = 0;
@@ -301,6 +322,11 @@ void SocketConnectionHandler::readFixedSizeMessage() {
 // sends all messages in queue
 // is blocking, so each sendBytes should send all bytes (see StreamSocketImpl::sendBytes)
 void SocketConnectionHandler::writeHeaderAndMessage() {
+    
+    if(!socketPtr) {
+        ofLogError() << "* writeHeaderAndMessage error - no socketPtr";
+        return;
+    }
     
     queueMutex.lock();
     bool hasMessagesToSend = sendBuffers.size() > 0;
@@ -348,6 +374,11 @@ void SocketConnectionHandler::writeHeaderAndMessage() {
 
 void SocketConnectionHandler::writeDelimitedMessage() {
     
+    if(!socketPtr) {
+        ofLogError() << "* writeDelimitedMessage error - no socketPtr";
+        return;
+    }
+    
     queueMutex.lock();
     bool hasMessagesToSend = sendBuffers.size() > 0;
     if(!hasMessagesToSend) {
@@ -382,6 +413,11 @@ void SocketConnectionHandler::writeDelimitedMessage() {
 }
 
 void SocketConnectionHandler::writeAvailableBytes() {
+    
+    if(!socketPtr) {
+        ofLogError() << "* writeAvailableBytes error - no socketPtr";
+        return;
+    }
     
     queueMutex.lock();
     bool hasMessagesToSend = sendBuffers.size() > 0;

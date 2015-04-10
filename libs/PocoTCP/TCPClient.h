@@ -18,6 +18,7 @@ public:
     void connect(string ipAddr, int port, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
     bool isConnected();
     
+    // doesn't work!
     void disconnect();
     
     // doesnt need listeners for added/removed as it's created internally

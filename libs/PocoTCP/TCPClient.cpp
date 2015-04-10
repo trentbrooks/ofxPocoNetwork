@@ -44,9 +44,12 @@ void TCPClient::connect(string ipAddr, int port, MessageFraming protocol) {
         // can't create handler until it's connected!
         socketHandler = new TCPClientConnectionHandler(socketStream, protocol);
         ofAddListener(socketHandler->disconnectionEvent, this, &TCPClient::onClientRemoved);
+
         thread.start(*socketHandler);
         
         connected = true;
+        return;
+        
     } catch(Poco::Exception& exc) {
         ofLogError() << "* TCPClient failed to connect to server 1: " << exc.displayText();
     }  catch(std::exception& exc) {
@@ -54,6 +57,13 @@ void TCPClient::connect(string ipAddr, int port, MessageFraming protocol) {
     } catch (...) {
         ofLogError() << "* TCPClient failed to connect to server 3";
     }
+    
+    // clean up on fail
+    disconnect();
+    if(thread.isRunning()) {
+        thread.join();
+    }
+    
 }
     
     
@@ -63,9 +73,9 @@ bool TCPClient::isConnected() {
 
 void TCPClient::disconnect() {
     
-    ofLog() << "Disconnecting whoa whoa";
-    //waitForThread();
-    if(socketStream) {
+    //onClientRemoved(this);
+    
+    /*if(socketStream) {
         
         // http://stackoverflow.com/questions/3757289/tcp-option-so-linger-zero-when-its-required
         // if don't set this, the server sends a few success messages even if this is closed
@@ -80,23 +90,44 @@ void TCPClient::disconnect() {
         //socketStream->setKeepAlive(false);
         //socketStream->shutdown();
         //socketStream->close();
+    }*/
+    
+    if(socketHandler) {
+        try {
+            ofRemoveListener(socketHandler->disconnectionEvent, this, &TCPClient::onClientRemoved);
+        } catch (Poco::Exception& exc) {
+            ofLogError() << "* Failed to remove listener";
+        }
+        delete socketHandler;
+        socketHandler = NULL;
     }
+    if(socketAddress) {
+        delete socketAddress;
+        socketAddress = NULL;
+    }
+    if(socketStream) {
+        delete socketStream;
+        socketStream = NULL;
+    }
+    
     connected = false;
-    delete socketAddress;
-    socketAddress = NULL;
-    delete socketStream;
-    socketStream = NULL;
 }
 
     
 //--------------------------------------------------------------
 void TCPClient::onClientRemoved(const void* socket) {
     
-    ofRemoveListener(socketHandler->disconnectionEvent, this, &TCPClient::onClientRemoved);
-    delete socketHandler;
-    socketHandler = NULL;
-    delete socketStream;
-    socketStream = NULL;
+    if(socketHandler) {
+        ofRemoveListener(socketHandler->disconnectionEvent, this, &TCPClient::onClientRemoved);
+        delete socketHandler;
+        socketHandler = NULL;
+    }
+    
+    if(socketStream) {
+        delete socketStream;
+        socketStream = NULL;
+    }
+    
     connected = false;
 }
 
