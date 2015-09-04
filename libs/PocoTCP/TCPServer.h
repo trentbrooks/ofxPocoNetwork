@@ -44,6 +44,22 @@ public:
     
     void printServerInfo();
     
+    // max send/receive - see SocketConnectionHandler for details
+    // might need to set these for all client sockets instead of server socket
+    void setMaxSendSize(int size) {
+        if(serverSocket) serverSocket->setSendBufferSize(size);// setMaxSendSize(size);
+    }
+    int getMaxSendSize() {
+        if(serverSocket) return serverSocket->getSendBufferSize();// getMaxSendSize();
+        return 0;
+    }
+    void setMaxReceiveSize(int size) {
+        if(serverSocket) serverSocket->setReceiveBufferSize(size);// setMaxReceiveSize(size);
+    }
+    int getMaxReceiveSize() {
+        if(serverSocket) return serverSocket->getReceiveBufferSize();// getMaxReceiveSize();
+        return 0;
+    }
     
 protected:
     

@@ -102,7 +102,7 @@ bool TCPServer::getNextMessage(int clientId, string& msg) {
     if(clientId >= clients.size()) return false;
     ofBuffer receiveBuffer;
     clients[clientId]->getNextMessage(receiveBuffer);
-    msg = receiveBuffer.getBinaryBuffer();
+    msg = receiveBuffer.getData();
     return true;
 
 }

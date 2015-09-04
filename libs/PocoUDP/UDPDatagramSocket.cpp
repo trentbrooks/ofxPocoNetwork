@@ -147,7 +147,7 @@ namespace ofxPocoNetwork {
         while( isThreadRunning() ){
             
             if(connected) {
-                
+                                
                 // 1. read from socket
                 processRead();
                 
@@ -174,7 +174,7 @@ namespace ofxPocoNetwork {
                 //ofBuffer buffer;
                 messageInfo.buffer.allocate(receiveSize);
                 //Poco::Net::SocketAddress sender; // use this to identify the sender
-                int n = socket->receiveFrom(messageInfo.buffer.getBinaryBuffer(), messageInfo.buffer.size(), messageInfo.address);
+                int n = socket->receiveFrom(messageInfo.buffer.getData(), messageInfo.buffer.size(), messageInfo.address);
                 if(n <= 0) {
                     ofLogError() << "* Read fail 1 (none): disconnecting";
                     disconnect();
@@ -233,16 +233,17 @@ namespace ofxPocoNetwork {
             //ofBuffer buffer = sendBuffers.front();
             mutex.unlock();
             
+            
             while (hasMessagesToSend) {
                 
                 // who is this sending to? should store the sender in the send queue
-                //int nSent = socket->sendBytes(buffer.getBinaryBuffer(), buffer.size());
+                //int nSent = socket->sendBytes(buffer.getData(), buffer.size());
                 
                 // server must send to a connected client, not the destinationAddress (we only know the address if received a message)
-                int nSent = socket->sendTo(messageInfo.buffer.getBinaryBuffer(), messageInfo.buffer.size(), messageInfo.address);
+                int nSent = socket->sendTo(messageInfo.buffer.getData(), messageInfo.buffer.size(), messageInfo.address);
                 
                 // client must send to remote server (destinationAddress)
-                //int nSent = socket->sendTo(buffer.getBinaryBuffer(), buffer.size(), *destinationAddress);
+                //int nSent = socket->sendTo(buffer.getData(), buffer.size(), *destinationAddress);
                 
                 if(nSent <= 0) {
                     ofLogError() << "* Send fail 1 (none): disconnecting";
@@ -304,7 +305,7 @@ namespace ofxPocoNetwork {
     bool UDPDatagramSocket::getNextMessage(string& msg) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(receiveBuffers.size()) {
-            msg = receiveBuffers.front().buffer.getBinaryBuffer();
+            msg = receiveBuffers.front().buffer.getData();
             receiveBuffers.pop();
             return true;
         }
@@ -325,7 +326,7 @@ namespace ofxPocoNetwork {
     bool UDPDatagramSocket::getNextMessage(string& msg, Poco::Net::SocketAddress &emptyAddress) {
         Poco::ScopedLock<ofMutex> lock(mutex);
         if(receiveBuffers.size()) {
-            msg = receiveBuffers.front().buffer.getBinaryBuffer();
+            msg = receiveBuffers.front().buffer.getData();
             emptyAddress = receiveBuffers.front().address;
             receiveBuffers.pop();
             return true;
@@ -448,6 +449,8 @@ namespace ofxPocoNetwork {
     //--------------------------------------------------------------
     void UDPDatagramSocket::setMaxSendSize(int size) {
         if(connected) {
+            
+            if(size > 64000) ofLogWarning() << "* Max UDP packet size is 64k";
             
             // advanced: change pocos max internal buffer send size- default send is 9216
             socket->setSendBufferSize(size);

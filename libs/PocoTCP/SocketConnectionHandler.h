@@ -77,6 +77,13 @@ public:
         return peerAddress.port();
     }
     
+    // sockets have a max limit on how much you can send + receive
+    // adjust these to send much larger buffers - these need to be set before receiving or it just sits and does nothing
+    void setMaxSendSize(int size);
+    int getMaxSendSize();
+    void setMaxReceiveSize(int size);
+    int getMaxReceiveSize();
+    
 protected:
 
     Poco::Net::StreamSocket* socketPtr;
