@@ -5,7 +5,7 @@
 void ofApp::setup(){
 
     ofSetFrameRate(60);
-    client.connect("localhost", 12345, ofxPocoNetwork::FRAME_FIXED_SIZE);
+    client.connect("localhost", 12345, ofxPocoNetwork::FRAME_HEADER_AND_MESSAGE);
 }
 
 //--------------------------------------------------------------

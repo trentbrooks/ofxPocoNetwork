@@ -37,7 +37,8 @@ public:
     
     // send (non blocking)
     void sendMessage(string msg);
-    void sendMessage(ofBuffer& msg);
+    void sendMessage(ofBuffer& buffer);
+    void sendMessage(ofBuffer&& buffer); //c++11 move
     
     // receive (non blocking)
     bool hasWaitingMessages();

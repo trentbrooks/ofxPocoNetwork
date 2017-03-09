@@ -44,10 +44,12 @@ namespace ofxPocoNetwork {
         
         // receive
         bool hasWaitingMessages();
+        int getWaitingMessageCount();
         bool getNextMessage(ofBuffer& message); // ignores sender address
         bool getNextMessage(string& msg); // ignores sender address
         bool getNextMessage(ofBuffer& message, Poco::Net::SocketAddress &emptyAddress); // fills address
         bool getNextMessage(string& msg, Poco::Net::SocketAddress &emptyAddress); // fills address
+        bool getNextMessage(UDPMessageInfo& message);
         void setReceiveSize(int size);
         
         // send messages to destinationAddress (for clients only)

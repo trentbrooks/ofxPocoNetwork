@@ -6,7 +6,6 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     
     server.bind(5002);
-    //server.setBroadcast(true);
 }
 
 //--------------------------------------------------------------

@@ -6,9 +6,10 @@ void ofApp::setup(){
     
     ofSetFrameRate(60);
     
-    client.connect("localhost",5002,5320,true);
-    //client.connect("127.0.0.1",5002);
-    //client.setBroadcast(true);
+    //client.connect("localhost",5002,5320,true);
+    //client.connect("localhost",5002);
+    client.connect("255.255.255.255",5002);
+    client.setBroadcast(true);
     
 }
 

@@ -26,9 +26,11 @@ public:
     void onClientRemoved(const void* socket);
     vector<TCPServerConnectionHandler*> clients;
     int getNumClients();
+    int getClientIndexForAddress(Poco::Net::SocketAddress address);
 
     // receive requests from clients
     bool hasWaitingMessages(int clientId);
+    int getWaitingMessageCount(int clientId);
     void setReceiveSize(int clientId, int size);
     bool getNextMessage(int clientId, string& msg);
     bool getNextMessage(int clientId, ofBuffer& buffer);

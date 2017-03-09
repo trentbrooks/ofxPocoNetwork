@@ -110,10 +110,6 @@ void TCPClient::disconnect() {
         delete socketAddress;
         socketAddress = NULL;
     }
-    if(socketStream) {
-        delete socketStream;
-        socketStream = NULL;
-    }
     
     connected = false;
 }
@@ -199,6 +195,11 @@ void TCPClient::sendMessage(string msg) {
 
 
 void TCPClient::sendMessage(ofBuffer& buffer) {
+    if(!connected) return;
+    socketHandler->sendMessage(buffer);
+}
+
+void TCPClient::sendMessage(ofBuffer&& buffer) {
     if(!connected) return;
     socketHandler->sendMessage(buffer);
 }
