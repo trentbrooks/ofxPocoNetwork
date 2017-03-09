@@ -18,6 +18,7 @@ public:
     void connect(string ipAddr, int port, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
     bool isConnected();
     
+    // doesn't work!
     void disconnect();
     
     // doesnt need listeners for added/removed as it's created internally
@@ -36,12 +37,29 @@ public:
     
     // send (non blocking)
     void sendMessage(string msg);
-    void sendMessage(ofBuffer& msg);
+    void sendMessage(ofBuffer& buffer);
+    void sendMessage(ofBuffer&& buffer); //c++11 move
     
     // receive (non blocking)
     bool hasWaitingMessages();
     bool getNextMessage(ofBuffer& buffer);
     bool getNextMessage(string& buffer);
+    
+    // max send/receive - see SocketConnectionHandler for details
+    void setMaxSendSize(int size) {
+        if(socketHandler) socketHandler->setMaxSendSize(size);
+    }
+    int getMaxSendSize() {
+        if(socketHandler) return socketHandler->getMaxSendSize();
+        return 0;
+    }
+    void setMaxReceiveSize(int size) {
+        if(socketHandler) socketHandler->setMaxReceiveSize(size);
+    }
+    int getMaxReceiveSize() {
+        if(socketHandler) return socketHandler->getMaxReceiveSize();
+        return 0;
+    }
     
 protected:
     

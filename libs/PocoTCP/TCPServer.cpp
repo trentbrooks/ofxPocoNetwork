@@ -71,6 +71,15 @@ int TCPServer::getNumClients() {
     //return server->currentConnections();
     return clients.size();
 }
+    
+int TCPServer::getClientIndexForAddress(Poco::Net::SocketAddress address) {
+    for(int i = 0; i < clients.size(); i++) {
+        if(clients[i]->getSocketAddressObject() == address) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 void TCPServer::printServerInfo() {
     
@@ -95,6 +104,11 @@ void TCPServer::setFixedReceiveSize(int s) {
 bool TCPServer::hasWaitingMessages(int clientId) {
     if(clientId >= clients.size()) return false;
     return clients[clientId]->hasWaitingMessages();
+}
+    
+int TCPServer::getWaitingMessageCount(int clientId) {
+    if(clientId >= clients.size()) return false;
+    return clients[clientId]->getWaitingMessageCount();
 }
 
 // non blocking - message/buffer should already exist in connection handler.

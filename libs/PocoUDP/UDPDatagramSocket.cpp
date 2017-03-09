@@ -5,7 +5,7 @@ namespace ofxPocoNetwork {
     
     
     UDPDatagramSocket::UDPDatagramSocket() {
-        receiveSize = 256;
+        receiveSize = 512;
         sleepTime = 16;
         port = sourcePort = 0;
         connected = false;
@@ -140,6 +140,7 @@ namespace ofxPocoNetwork {
         return clients.size();
     }
     
+    
     // thread
     //--------------------------------------------------------------
     void UDPDatagramSocket::threadedFunction(){
@@ -147,7 +148,7 @@ namespace ofxPocoNetwork {
         while( isThreadRunning() ){
             
             if(connected) {
-                
+                                
                 // 1. read from socket
                 processRead();
                 
@@ -167,7 +168,9 @@ namespace ofxPocoNetwork {
         try {
             
             // when enough data available receive the message
-            if(socket->available()) {
+            while(socket->available()) {
+                
+                //int availableSize = socket->available();
                 
                 // receive
                 UDPMessageInfo messageInfo;
@@ -183,6 +186,7 @@ namespace ofxPocoNetwork {
                 
                 // for server only
                 // who sent message (sender) ? need to create list if want to send back anything
+                // note - this list does not clear automatically! need to manually remove clients
                 if(isServer) {
                     bool clientAdded = false;
                     mutex.lock();
@@ -193,12 +197,13 @@ namespace ofxPocoNetwork {
                         }
                     }
                     if(!clientAdded) {
+                        ofLog() << "New client connection: " << messageInfo.address.toString();
                         clients.push_back(messageInfo.address);
                     }
                     mutex.unlock();
                 }
                 
-                
+                //ofLog() << "Available = " << availableSize << ", receive size: " << messageInfo.buffer.getText().size() << ", taken: " << n;
                 
                 // copy/replace buffer / or push into queue
                 mutex.lock();
@@ -233,6 +238,7 @@ namespace ofxPocoNetwork {
             //ofBuffer buffer = sendBuffers.front();
             mutex.unlock();
             
+            
             while (hasMessagesToSend) {
                 
                 // who is this sending to? should store the sender in the send queue
@@ -249,6 +255,8 @@ namespace ofxPocoNetwork {
                     disconnect();
                     return;
                 } else {
+                    
+                    //ofLog() << "Sent: " << nSent << ", to: " << messageInfo.address.toString();
                     
                     mutex.lock();
                     sendBuffers.pop();
@@ -289,6 +297,14 @@ namespace ofxPocoNetwork {
         Poco::ScopedLock<ofMutex> lock(mutex);
         return receiveBuffers.size() > 0;
         //if(clientId >= clients.size()) return false;
+    }
+    
+    int UDPDatagramSocket::getWaitingMessageCount() {
+        Poco::ScopedLock<ofMutex> lock(mutex);
+        //mutex.lock();
+        //int s = receiveBuffers.size();
+        //mutex.unlock();
+        return receiveBuffers.size();
     }
     
     bool UDPDatagramSocket::getNextMessage(ofBuffer& message) {
@@ -333,6 +349,18 @@ namespace ofxPocoNetwork {
         return false;
     }
     
+    bool UDPDatagramSocket::getNextMessage(UDPMessageInfo& message) {
+        Poco::ScopedLock<ofMutex> lock(mutex);
+        //mutex.lock();
+        if(receiveBuffers.size()) {
+            message = receiveBuffers.front();
+            receiveBuffers.pop();
+            //mutex.unlock();
+            return true;
+        }
+        //mutex.unlock();
+        return false;
+    }
     
     // sending - for clients
     //--------------------------------------------------------------
@@ -448,6 +476,8 @@ namespace ofxPocoNetwork {
     //--------------------------------------------------------------
     void UDPDatagramSocket::setMaxSendSize(int size) {
         if(connected) {
+            
+            if(size > 64000) ofLogWarning() << "* Max UDP packet size is 64k";
             
             // advanced: change pocos max internal buffer send size- default send is 9216
             socket->setSendBufferSize(size);

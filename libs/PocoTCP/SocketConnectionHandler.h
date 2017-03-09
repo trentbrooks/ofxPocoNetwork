@@ -50,8 +50,11 @@ public:
     
     // send/receive (into/from queue)
     virtual void sendMessage(ofBuffer& message);
+    virtual void sendMessage(ofBuffer&& message); //c++11 move
     virtual bool getNextMessage(ofBuffer& message);
+    virtual bool getNextMessage(ofBuffer&& message); //c++11 move
     bool hasWaitingMessages();
+    int getWaitingMessageCount();
     
     // message framing options
     void setDelimiter(char d);
@@ -65,6 +68,10 @@ public:
         return address.toString();
     }
     
+    Poco::Net::SocketAddress getSocketAddressObject() {
+        return address;
+    }
+    
     string getPeerAddress() {
         return peerAddress.toString();
     }
@@ -76,6 +83,13 @@ public:
     int getPeerPort() {
         return peerAddress.port();
     }
+    
+    // sockets have a max limit on how much you can send + receive
+    // adjust these to send much larger buffers - these need to be set before receiving or it just sits and does nothing
+    void setMaxSendSize(int size);
+    int getMaxSendSize();
+    void setMaxReceiveSize(int size);
+    int getMaxReceiveSize();
     
 protected:
 
@@ -100,7 +114,7 @@ protected:
     void writeHeaderAndMessage();
     bool isHeaderComplete;
     int nextMessageSize;
-    
+        
     // 2. delimiter - messages broken up by single character
     char delimiter;
     vector<char> delimBuffers;
