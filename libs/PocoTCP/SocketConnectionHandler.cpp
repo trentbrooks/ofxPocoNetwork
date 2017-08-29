@@ -80,8 +80,6 @@ void SocketConnectionHandler::sendMessage(ofBuffer& message) {
         //return;
     }*/
     
-<<<<<<< HEAD
-=======
     sendBuffers.push(message);
     //ofLog() << sendBuffers.size();
 }
@@ -90,7 +88,6 @@ void SocketConnectionHandler::sendMessage(ofBuffer& message) {
 void SocketConnectionHandler::sendMessage(ofBuffer&& message) {
     
     Poco::ScopedLock<ofMutex> lock(queueMutex);
->>>>>>> 090
     sendBuffers.push(message);
 }
 
@@ -146,25 +143,7 @@ int SocketConnectionHandler::getMaxReceiveSize() {
     return 0;
 }
     
-//--------------------------------------------------------------
-void SocketConnectionHandler::setMaxSendSize(int size) {
-    if(socketPtr) socketPtr->setSendBufferSize(size);
-}
-    
-int SocketConnectionHandler::getMaxSendSize() {
-    if(socketPtr) return socketPtr->getSendBufferSize();
-    return 0;
-}
 
-void SocketConnectionHandler::setMaxReceiveSize(int size) {
-    if(socketPtr) socketPtr->setReceiveBufferSize(size);
-}
-    
-int SocketConnectionHandler::getMaxReceiveSize() {
-    if(socketPtr) return socketPtr->getReceiveBufferSize();
-    return 0;
-}
-    
 //--------------------------------------------------------------
 void SocketConnectionHandler::setFixedReceiveSize(int s) {
     Poco::ScopedLock<ofMutex> lock(queueMutex);
@@ -274,11 +253,7 @@ void SocketConnectionHandler::readHeaderAndMessage() {
         if(availableBytes >= nextMessageSize) {
             ofBuffer buffer;
             buffer.allocate(nextMessageSize);
-<<<<<<< HEAD
             int n = socketPtr->receiveBytes(buffer.getBinaryBuffer(), buffer.size());
-=======
-            int n = socketPtr->receiveBytes(buffer.getData(), buffer.size());
->>>>>>> 090
             if (n > 0) {
                 taken += n;
                 queueMutex.lock();
@@ -295,13 +270,8 @@ void SocketConnectionHandler::readHeaderAndMessage() {
     // if still more bytes - run same function recursively?
     // weird crash with this - availableBytes had no value yet was greater than 0
     if(availableBytes > taken) {
-<<<<<<< HEAD
-        //readHeaderAndMessage();
-        //ofLogError() << "* Error with available/taken: " << availableBytes << "/" << taken;
-=======
         //ofLogError() << "* Error with available/taken: " << availableBytes << "/" << taken << ", waiting for: " << nextMessageSize;
         if(taken > 0) readHeaderAndMessage();
->>>>>>> 090
     }
 
 }
@@ -384,11 +354,7 @@ void SocketConnectionHandler::readFixedSizeMessage() {
     if(availableBytes >= fixedReceiveSize) {
         ofBuffer buffer;
         buffer.allocate(fixedReceiveSize);
-<<<<<<< HEAD
-        int n = socketPtr->receiveBytes(buffer.getBinaryBuffer(), buffer.size());
-=======
         int n = socketPtr->receiveBytes(buffer.getData(), buffer.size());
->>>>>>> 090
         if (n > 0) {
             taken += n;
             queueMutex.lock();

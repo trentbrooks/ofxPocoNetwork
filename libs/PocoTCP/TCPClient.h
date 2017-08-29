@@ -5,6 +5,7 @@
 #include "Poco/Net/SocketStream.h"
 #include "Poco/Net/StreamSocket.h"
 #include "TCPConnectionHandler.h"
+#include "Poco/RunnableAdapter.h"
 
 
 namespace ofxPocoNetwork {
@@ -16,9 +17,10 @@ public:
     virtual ~TCPClient();
     
     void connect(string ipAddr, int port, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
+    void connectAsync(string ipAddr, int port, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
     bool isConnected();
+    bool isAsyncComplete();
     
-    // doesn't work!
     void disconnect();
     
     // doesnt need listeners for added/removed as it's created internally
@@ -70,10 +72,22 @@ protected:
     Poco::Net::StreamSocket* socketStream;
     Poco::Thread thread;
     
+    // after client connects to server - need to setup the socket connection for messages
+    MessageFraming framingProtocol;
+    void createSocketHandler();
+    
     Poco::Timespan connectTimeout;
     //Poco::Timespan receiveTimeout;
     //Poco::Timespan sendTimeout;
     //Poco::Timespan pollTimeout;
+    
+    // adding a runnable process for the 'connect' part (uses same thread for messaging)
+    Poco::RunnableAdapter<TCPClient>* connectAdaptor;
+    void connectAsyncImpl();
+    bool isAsync=false, asyncComplete=false, asyncUpdateComplete = false, asyncSuccess=false;
+    //float retryConnectAfterSeconds = 10;
+    void updateAsync(ofEventArgs & args);
+    
 };
 
 } // namespace ofxPocoNetwork

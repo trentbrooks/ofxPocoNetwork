@@ -20,6 +20,8 @@ TCPServer::~TCPServer() {
      ofLogError() << "* ~TCPServer failed to setLinger: " << exc.displayText();
      }
      }*/
+    
+    ofLog() << "Disconnecting TCPServer...";
     if(server) server->stop();
     
     delete server;
