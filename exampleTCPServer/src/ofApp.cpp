@@ -68,10 +68,11 @@ void ofApp::keyPressed(int key){
 }
 
 //--------------------------------------------------------------
+string msg = "";
 void ofApp::keyReleased(int key){
-    
+    msg += ofToString(key);
     if(server.getNumClients()) {
-        string message = "Hello from server " + ofToString(sentMessages.size());
+        string message = "Hello from server " + ofToString(sentMessages.size()) + ", msg: " + msg;
         server.sendMessageToAll(message);
         sentMessages.push_back(message);
     }

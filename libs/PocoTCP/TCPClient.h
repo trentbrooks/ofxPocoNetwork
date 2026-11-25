@@ -68,8 +68,8 @@ protected:
     bool connected;
     int fixedReceiveSize;
     
-    Poco::Net::SocketAddress* socketAddress;
-    Poco::Net::StreamSocket* socketStream;
+    Poco::Net::SocketAddress* socketAddress = NULL;
+    Poco::Net::StreamSocket* socketStream = NULL;
     Poco::Thread thread;
     
     // after client connects to server - need to setup the socket connection for messages
@@ -82,7 +82,7 @@ protected:
     //Poco::Timespan pollTimeout;
     
     // adding a runnable process for the 'connect' part (uses same thread for messaging)
-    Poco::RunnableAdapter<TCPClient>* connectAdaptor;
+    Poco::RunnableAdapter<TCPClient>* connectAdaptor = NULL;
     void connectAsyncImpl();
     bool isAsync=false, asyncComplete=false, asyncUpdateComplete = false, asyncSuccess=false;
     //float retryConnectAfterSeconds = 10;

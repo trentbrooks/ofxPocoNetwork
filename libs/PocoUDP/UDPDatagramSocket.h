@@ -2,7 +2,7 @@
 #include "ofMain.h"
 #include "Poco/Net/DatagramSocket.h"
 #include "Poco/Net/SocketAddress.h"
-
+#include "Poco/ScopedLock.h"
 
 /*
  UDPSocket

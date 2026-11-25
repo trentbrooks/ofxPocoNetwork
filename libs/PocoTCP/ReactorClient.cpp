@@ -107,7 +107,8 @@ bool ReactorClient::getNextMessage(ofBuffer& msg) {
 //--------------------------------------------------------------
 void ReactorClient::sendMessage(string msg) {
     if(!connected) return;
-    ofBuffer buffer(msg);
+    ofBuffer buffer;//(msg);
+    buffer.set(msg);
     socketHandler->sendMessage(buffer);
 }
 

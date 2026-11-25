@@ -8,6 +8,7 @@
 #include "Poco/Net/TCPServerConnection.h"
 #include "Poco/Net/Socket.h"
 #include "SocketConnectionHandler.h"
+#include <atomic>
 
 
 namespace ofxPocoNetwork {
@@ -31,7 +32,7 @@ protected:
     
     // thread/poco runnable
     void run(); // async thread loop called fron TCPServerConnectionHandler/TCPClientConnectionHandler
-    bool isRunning;
+    std::atomic<bool> isRunning;
     int sleepTime;
     
 };
@@ -41,9 +42,15 @@ class TCPServerConnectionHandler : public Poco::Net::TCPServerConnection, public
 public:
     TCPServerConnectionHandler(const Poco::Net::StreamSocket& streamSocket, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE) : Poco::Net::TCPServerConnection(streamSocket), TCPConnectionHandler(&socket(), protocol) {
     }
+
+    // May be called by the server thread. Leave queues and callbacks to the worker.
+    void requestStop();
+    void disconnect() override { requestStop(); }
     
     void run() {
         TCPConnectionHandler::run();
+        // Remove from the server before Poco destroys the handler and its queues.
+        ofNotifyEvent(disconnectionEvent, static_cast<SocketConnectionHandler*>(this));
     }
 };
 

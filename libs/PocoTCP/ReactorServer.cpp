@@ -85,7 +85,8 @@ void ReactorServer::setFixedReceiveSize(int s) {
 void ReactorServer::sendMessage(int clientId, string msg) {
     //if(!clients.size()) return;
     if(clientId >= clients.size()) return;
-    ofBuffer buffer(msg);
+    ofBuffer buffer;//(msg);
+    buffer.set(msg);
     clients[clientId]->sendMessage(buffer);
 }
 

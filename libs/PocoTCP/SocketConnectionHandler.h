@@ -93,7 +93,7 @@ public:
     
 protected:
 
-    Poco::Net::StreamSocket* socketPtr;
+    Poco::Net::StreamSocket* socketPtr = NULL;
     Poco::Net::SocketAddress peerAddress;
     Poco::Net::SocketAddress address;
     

@@ -23,9 +23,18 @@ namespace ofxPocoNetwork {
     void UDPDatagramSocket::disconnect() {
         waitForThread();
         connected = false;
-        if(destinationAddress) delete destinationAddress;
-        if(sourceAddress) delete sourceAddress;
-        if(socket) delete socket;
+        if(destinationAddress) {
+            delete destinationAddress;
+            destinationAddress=NULL;
+        }
+        if(sourceAddress) {
+            delete sourceAddress;
+            sourceAddress=NULL;
+        }
+        if(socket) {
+            delete socket;
+            socket=NULL;
+        }
         ofLog() << "Disconnected UDPDatagramSocket.";
     }
     
@@ -214,7 +223,16 @@ namespace ofxPocoNetwork {
             
         } catch (Poco::Exception &e) {
             ofLogError() << "* Read fail 2: disconnecting. " << e.message();
-            disconnect();
+            // windows bug here on UDP server that 'sends'. when we disconnect/close a client (eg. from mac) it crashes here and disconnects server
+            // need to identify the client and remove from list insteadcl or just clear all
+            if (isServer) {
+                ofLog() << "Clearing all clients list instead of disconnect!"; // seems to work on windows
+                clients.clear();
+            }
+            else {
+                disconnect();
+            }
+            
         } catch(std::exception& exc) {
             ofLogError() << "* Read fail 4: disconnecting";
             disconnect();
@@ -369,7 +387,9 @@ namespace ofxPocoNetwork {
         if(!checkClientValid()) return false;
         
         UDPMessageInfo messageInfo;
-        messageInfo.buffer = ofBuffer(msg);
+        ofBuffer buf;//(msg);
+        buf.set(msg);
+        messageInfo.buffer = buf;
         messageInfo.address = *destinationAddress;
         //ofBuffer buffer(msg);
         sendBuffers.push(messageInfo);
@@ -395,7 +415,9 @@ namespace ofxPocoNetwork {
         if(!checkServerValid()) return false;
         
         UDPMessageInfo messageInfo;
-        messageInfo.buffer = ofBuffer(msg);
+        ofBuffer buf;//(msg);
+        buf.set(msg);
+        messageInfo.buffer = buf;
         messageInfo.address = toAddress;
         //ofBuffer buffer(msg);
         sendBuffers.push(messageInfo);
@@ -421,7 +443,9 @@ namespace ofxPocoNetwork {
         
         for(int i = 0; i < clients.size(); i++) {
             UDPMessageInfo messageInfo;
-            messageInfo.buffer = ofBuffer(msg);
+            ofBuffer buf;//(msg);
+            buf.set(msg);
+            messageInfo.buffer = buf;//ofBuffer(msg);
             messageInfo.address = clients[i];
             //ofBuffer buffer(msg);
             sendBuffers.push(messageInfo);

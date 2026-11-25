@@ -7,6 +7,8 @@
 #include "Poco/Net/TCPServerConnection.h"
 #include "Poco/Net/Socket.h"
 #include "TCPConnectionHandler.h"
+#include "Poco/ThreadPool.h"
+#include <mutex>
 
 
 namespace ofxPocoNetwork {
@@ -20,7 +22,9 @@ public:
     ~TCPServer();
         
     void start(int port, MessageFraming protocol=FRAME_HEADER_AND_MESSAGE);
-    
+    // Owner-thread API; also called by the destructor. Safe to call repeatedly.
+    void stop();
+
     // clients/connections
     void onClientConnected(TCPServerConnectionHandler* socketHandler); // callback from connection factory handler
     void onClientRemoved(const void* socket);
@@ -64,14 +68,17 @@ public:
     }
     
 protected:
-    
+    // Recursive because broadcast methods call the individual send methods.
+    std::recursive_mutex clientsMutex;
+    bool stopping = false;
+    Poco::ThreadPool connectionThreads;
     
     int serverPort;
     int fixedReceiveSize;
     
-    Poco::Net::ServerSocket* serverSocket;
-    Poco::Net::TCPServer* server;
-    CustomTCPServerConnectionFactory* connectionFactory;
+    Poco::Net::ServerSocket* serverSocket = NULL;
+    Poco::Net::TCPServer* server = NULL;
+    CustomTCPServerConnectionFactory* connectionFactory = NULL;
     
 
 };

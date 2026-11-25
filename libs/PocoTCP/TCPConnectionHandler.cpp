@@ -38,6 +38,17 @@ void TCPConnectionHandler::disconnect() {
     SocketConnectionHandler::disconnect();
 }
 
+void TCPServerConnectionHandler::requestStop() {
+    if(!isRunning.exchange(false)) return;
+    try {
+        // Wake a worker blocked in sendBytes/receiveBytes without deleting its socket.
+        socket().shutdown();
+    } catch(const Poco::Exception& error) {
+        // A peer may already have closed the connection.
+        ofLogVerbose("ofxPocoNetwork") << "Socket shutdown: " << error.displayText();
+    }
+}
+
 // thread loop - no sleep
 //--------------------------------------------------------------
 void TCPConnectionHandler::run() {
@@ -46,6 +57,7 @@ void TCPConnectionHandler::run() {
                 
         // 1. read from socket
         processRead();
+        if(!isRunning) break;
         
         // 2. write to socket
         processWrite();
