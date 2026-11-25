@@ -45,13 +45,8 @@ public:
 
     // May be called by the server thread. Leave queues and callbacks to the worker.
     void requestStop();
-    void disconnect() override { requestStop(); }
-    
-    void run() {
-        TCPConnectionHandler::run();
-        // Remove from the server before Poco destroys the handler and its queues.
-        ofNotifyEvent(disconnectionEvent, static_cast<SocketConnectionHandler*>(this));
-    }
+    void disconnect() override;
+    void run() override;
 };
 
 // client only version of TCPConnectionHandler with a runnable

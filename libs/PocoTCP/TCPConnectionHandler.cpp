@@ -1,4 +1,5 @@
 #include "TCPConnectionHandler.h"
+#include <exception>
 
 namespace ofxPocoNetwork {
 
@@ -47,6 +48,51 @@ void TCPServerConnectionHandler::requestStop() {
         // A peer may already have closed the connection.
         ofLogVerbose("ofxPocoNetwork") << "Socket shutdown: " << error.displayText();
     }
+}
+
+void TCPServerConnectionHandler::disconnect() {
+    if(isRunning) {
+        ofLogWarning("ofxPocoNetwork") << "Closing TCP peer=" << getPeerAddress()
+            << " reason=socket read/write failure";
+    }
+    requestStop();
+}
+
+void TCPServerConnectionHandler::run() {
+    try {
+        while(isRunning) {
+            // available()==0 alone also means idle. Readability distinguishes EOF.
+            if(socket().poll(Poco::Timespan(0), Poco::Net::Socket::SELECT_READ)
+               && socket().available() == 0) {
+                if(isRunning) {
+                    ofLogNotice("ofxPocoNetwork") << "Closing TCP peer=" << getPeerAddress()
+                        << " reason=peer disconnected";
+                }
+                break;
+            }
+            processRead();
+            if(!isRunning) break;
+            processWrite();
+            if(!isRunning) break;
+            ofSleepMillis(sleepTime);
+        }
+    } catch(const Poco::Exception& error) {
+        if(isRunning) {
+            ofLogWarning("ofxPocoNetwork") << "Closing TCP peer=" << getPeerAddress()
+                << " reason=socket error: " << error.displayText();
+        }
+    } catch(const std::exception& error) {
+        ofLogError("ofxPocoNetwork") << "Closing TCP peer=" << getPeerAddress()
+            << " reason=worker exception: " << error.what();
+    } catch(...) {
+        ofLogError("ofxPocoNetwork") << "Closing TCP peer=" << getPeerAddress()
+            << " reason=unexpected worker exception";
+    }
+    requestStop();
+    ofLogNotice("ofxPocoNetwork") << "TCPConnectionHandler connection thread finished! peer="
+        << getPeerAddress();
+    // Callback removes the handler before Poco destroys it and its queues.
+    ofNotifyEvent(disconnectionEvent, static_cast<SocketConnectionHandler*>(this));
 }
 
 // thread loop - no sleep
